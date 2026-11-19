@@ -1,0 +1,102 @@
+@import '@fontsource/dm-sans/400.css';
+@import '@fontsource/dm-sans/500.css';
+@import '@fontsource/dm-sans/600.css';
+@import '@fontsource/dm-sans/700.css';
+@import '@fontsource/playfair-display/500.css';
+@import '@fontsource/playfair-display/600.css';
+@import '@fontsource/playfair-display/700.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-warm font-sans text-ink antialiased;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, h4 {
+    @apply font-serif text-forest;
+    letter-spacing: -0.005em;
+  }
+  ::selection {
+    background: #b7c8b5;
+    color: #173f2d;
+  }
+  :focus-visible {
+    outline: 2px solid #2f6245;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  input[type='range'],
+  input[type='checkbox'],
+  input[type='radio'] {
+    accent-color: #173f2d;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-5 py-2.5 text-sm font-medium transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-forest text-white hover:bg-botanical active:scale-[0.98];
+  }
+  .btn-outline {
+    @apply btn border border-forest/70 text-forest hover:bg-forest hover:text-white;
+  }
+  .btn-light {
+    @apply btn bg-white text-forest hover:bg-mist;
+  }
+  .btn-ghost {
+    @apply btn text-forest hover:bg-mist/60;
+  }
+  .field {
+    @apply w-full rounded-md border border-line bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/70 transition focus:border-botanical focus:outline-none focus:ring-2 focus:ring-botanical/20;
+  }
+  .field-error {
+    @apply border-red-700/60 focus:border-red-700 focus:ring-red-700/20;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-ink;
+  }
+  .eyebrow {
+    @apply text-[11px] font-semibold uppercase tracking-[0.2em] text-botanical;
+  }
+  .section {
+    @apply py-14 md:py-20;
+  }
+  .prose-gn p {
+    @apply mb-5 leading-relaxed text-ink/85;
+  }
+  .prose-gn h2 {
+    @apply mb-4 mt-10 text-2xl;
+  }
+  .prose-gn h3 {
+    @apply mb-3 mt-8 text-xl;
+  }
+  .prose-gn ul {
+    @apply mb-5 list-disc space-y-2 pl-5 text-ink/85;
+  }
+  .prose-gn ol {
+    @apply mb-5 list-decimal space-y-2 pl-5 text-ink/85;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
