@@ -53,7 +53,7 @@ export default function Footer() {
     <footer className="relative overflow-hidden bg-forest-900 text-white">
       <LeafyInteriorScene variant="footer" className="absolute inset-0 h-full w-full" />
       <div className="absolute inset-0 bg-gradient-to-r from-forest-900/85 via-forest-900/55 to-forest-900/30" />
-      <div className="container relative grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:grid-rows-[auto_1fr] lg:gap-y-8 lg:py-16">
+      <div className="container relative grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-[1.3fr_1.5fr_1fr_1fr] lg:grid-rows-[auto_1fr] lg:gap-y-8 lg:py-16">
         <div className="lg:row-span-2">
           <Logo light variant="full" className="h-24" />
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/80">
@@ -76,7 +76,7 @@ export default function Footer() {
         {COLS.map((c, i) => (
           <nav key={c.title} aria-label={c.title} className={i === 0 ? 'lg:row-span-2' : ''}>
             <h2 className="mb-4 font-sans text-sm font-semibold text-white">{c.title}</h2>
-            <ul className="space-y-2.5">
+            <ul className={c.links.length > 8 ? "grid grid-cols-2 gap-x-6 gap-y-2.5" : "space-y-2.5"}>
               {c.links.map(([label, to]) => (
                 <li key={label}>
                   <Link to={to} className="text-sm text-white/75 transition hover:text-white">
