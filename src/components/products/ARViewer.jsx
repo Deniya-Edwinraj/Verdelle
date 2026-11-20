@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import QRCode from 'qrcode';
 import { Box, Info, Loader2, Move3d, Ruler, ScanLine, Smartphone, X } from 'lucide-react';
 import { arFor, targetHeight } from '../../data/ar';
@@ -27,22 +28,43 @@ export default function ARViewer({ product, size, onSizeChange, autoOpen = false
   const [canAR, setCanAR] = useState(false);
   const [baseHeight, setBaseHeight] = useState(null);
   const mvRef = useRef(null);
+  const navigate = useNavigate();
+  const { pathname, search } = useLocation();
+  const hasAR = !!ar;
 
+  // Open once when arriving from a "?ar=1" link (home page / QR code).
+  const autoOpened = useRef(false);
   useEffect(() => {
-    if (autoOpen && ar) setOpen(true);
-  }, [autoOpen, ar]);
+    if (autoOpen && hasAR && !autoOpened.current) {
+      autoOpened.current = true;
+      setOpen(true);
+    }
+  }, [autoOpen, hasAR]);
+
+  const close = () => {
+    setOpen(false);
+    // Drop "?ar=1" so the viewer doesn't reopen on refresh or back.
+    const params = new URLSearchParams(search);
+    if (params.has('ar')) {
+      params.delete('ar');
+      const q = params.toString();
+      navigate(`${pathname}${q ? `?${q}` : ''}`, { replace: true });
+    }
+  };
 
   useEffect(() => {
     if (!open) return undefined;
     loadModelViewer().then(() => setReady(true));
     document.body.style.overflow = 'hidden';
-    const onKey = (e) => e.key === 'Escape' && setOpen(false);
+    const onKey = (e) => e.key === 'Escape' && closeRef.current();
     document.addEventListener('keydown', onKey);
     return () => {
       document.body.style.overflow = '';
       document.removeEventListener('keydown', onKey);
     };
   }, [open]);
+  const closeRef = useRef(close);
+  closeRef.current = close;
 
   // Measure the model once it loads so it can be scaled to the selected size's real height.
   useEffect(() => {
@@ -60,12 +82,12 @@ export default function ARViewer({ product, size, onSizeChange, autoOpen = false
     };
     mv.addEventListener('load', onLoad);
     return () => mv.removeEventListener('load', onLoad);
-  }, [ready]);
+  }, [ready, open]);
 
   if (!ar) return null;
 
   const current = product.sizes.find((s) => s.label === size) || product.sizes[0];
-  const target = targetHeight(current);
+  const target = targetHeight(current) || ar.height || null;
   const k = baseHeight && target ? target / baseHeight : 1;
   const scale = `${k.toFixed(3)} ${k.toFixed(3)} ${k.toFixed(3)}`;
   const pageUrl = `${window.location.origin}/product/${product.slug}?ar=1`;
@@ -96,7 +118,7 @@ export default function ARViewer({ product, size, onSizeChange, autoOpen = false
               <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-sage-soft">3D & AR view</p>
               <p className="truncate font-serif text-xl">{product.name}</p>
             </div>
-            <button onClick={() => setOpen(false)} className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white/10 transition hover:rotate-90 hover:bg-white/20" aria-label="Close 3D view">
+            <button type="button" onClick={close} className="relative z-10 grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white/10 transition hover:rotate-90 hover:bg-white/20" aria-label="Close 3D view">
               <X size={20} />
             </button>
           </div>
@@ -160,7 +182,7 @@ export default function ARViewer({ product, size, onSizeChange, autoOpen = false
                 </p>
                 <div className="mt-3 grid gap-2">
                   {product.sizes.map((s) => {
-                    const h = targetHeight(s);
+                    const h = targetHeight(s) || ar.height || null;
                     const on = s.label === current.label;
                     return (
                       <button

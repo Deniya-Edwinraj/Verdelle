@@ -14,6 +14,7 @@ const STEPS = [
 ];
 
 const HERO_SLUG = 'monstera-deliciosa';
+const STRIP = ['monstera-deliciosa', 'ficus-lyrata', 'pothos', 'philodendron', 'aloe-vera'];
 
 function QR({ url }) {
   const [src, setSrc] = useState(null);
@@ -27,7 +28,8 @@ function QR({ url }) {
 
 /* "View in your room" — augmented-reality showcase on the home page. */
 export default function ARShowcase() {
-  const plants = Object.keys(AR_PRODUCTS).map(getProduct).filter(Boolean);
+  const total = Object.keys(AR_PRODUCTS).length;
+  const plants = STRIP.filter((s) => AR_PRODUCTS[s]).map(getProduct).filter(Boolean);
   const hero = getProduct(HERO_SLUG) || plants[0];
   const [origin, setOrigin] = useState('');
   useEffect(() => setOrigin(window.location.origin), []);
@@ -142,7 +144,7 @@ export default function ARShowcase() {
           {/* AR-ready plants */}
           <div className="relative mt-14 border-t border-white/10 pt-8">
             <div className="flex items-end justify-between gap-4">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">AR-ready plants</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-white/60">{total} plants ready for AR</p>
               <Link to="/shop" className="text-xs font-medium text-sage-soft underline-offset-4 hover:underline">Shop all plants</Link>
             </div>
             <ul className="no-scrollbar -mx-2 mt-4 flex snap-x gap-3 overflow-x-auto px-2 pb-1 lg:grid lg:grid-cols-5 lg:overflow-visible">
