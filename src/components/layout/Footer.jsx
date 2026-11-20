@@ -4,17 +4,23 @@ import { Logo } from '../ui';
 import SocialLinks from './SocialLinks';
 import NewsletterForm from '../forms/NewsletterForm';
 import { LeafyInteriorScene } from '../art/scenes';
+import { useUI } from '../../context/UIContext';
 import { SITE } from '../../data/site';
 
 const COLS = [
   {
-    title: 'Site Map',
+    title: 'Quick Links',
     links: [
-      ['Homepage', '/'],
       ['Shop all plants', '/shop'],
       ['Collections', '/collections'],
       ['Plant Care', '/plant-care'],
-      ['GreenVibe Blog', '/blog'],
+      ['The Journal', '/blog'],
+      ['Plant Finder', '/plant-finder'],
+      ['Track Order', '/track-order'],
+      ['Gift Cards', '/gift-cards'],
+      ['Plant Subscription', '/subscription'],
+      ['Plant Doctor', '/plant-doctor'],
+      ['Rewards', '/rewards'],
       ['About Us', '/about'],
       ['Contact', '/contact'],
     ],
@@ -39,6 +45,7 @@ const COLS = [
 ];
 
 export default function Footer() {
+  const { setCookieOpen } = useUI();
   return (
     <footer className="relative overflow-hidden bg-forest-900 text-white">
       <LeafyInteriorScene variant="footer" className="absolute inset-0 h-full w-full" />
@@ -87,10 +94,13 @@ export default function Footer() {
       </div>
       <div className="relative border-t border-white/15">
         <div className="container flex flex-col items-center justify-between gap-3 py-5 text-xs text-white/70 md:flex-row">
-          <p>© {new Date().getFullYear()} Verdelle. All rights reserved. Demo storefront.</p>
+          <p>© {new Date().getFullYear()} Verdelle. All rights reserved.</p>
           <div className="flex flex-col items-center gap-1.5 md:items-end">
-            <p className="inline-flex items-center gap-1.5">
-              <Lock size={12} /> Secure checkout · Prices in {SITE.currency.code}
+            <p className="inline-flex flex-wrap items-center justify-center gap-1.5">
+              <Lock size={12} /> Secure checkout · Prices in {SITE.currency.code} ·
+              <button type="button" onClick={() => setCookieOpen(true)} className="underline-offset-2 transition hover:text-white hover:underline">
+                Cookie settings
+              </button>
             </p>
             <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-white/55">
               <span>Web solution by Deniya Edwinraj</span>

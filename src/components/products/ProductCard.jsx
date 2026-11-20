@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Eye, Heart, Plus, ShoppingBag, Star } from 'lucide-react';
+import { Bell, Eye, Heart, Plus, Scale, ShoppingBag, Star } from 'lucide-react';
 import { ProductImage } from '../art/scenes';
 import { money } from '../ui';
 import { useCart } from '../../context/CartContext';
@@ -11,20 +11,31 @@ export function useProductActions(product) {
   const cart = useCart();
   const wl = useWishlist();
   const notify = useToast();
+  const { openCart, setQuickView, inCompare, toggleCompare } = useUI();
   const outOfStock = product.stock === 'out-of-stock';
   return {
     outOfStock,
     wished: wl.has(product.id),
-    addToCart: (opts) => {
+    compared: inCompare(product.id),
+    addToCart: (opts = {}) => {
       if (outOfStock) return;
       cart.add(product, opts);
-      notify(`${product.name} added to your cart`, {
-        action: (
-          <Link to="/cart" className="shrink-0 text-xs font-semibold underline underline-offset-2">
-            View cart
-          </Link>
-        ),
-      });
+      setQuickView(null);
+      openCart({ product, size: opts.size || product.sizes[0].label, pot: opts.pot || product.potOptions[0]?.label || null, qty: opts.qty || 1 });
+    },
+    toggleCompare: () => {
+      const r = toggleCompare(product.id);
+      if (r === 'full') notify('You can compare up to 3 plants — remove one first', { type: 'info' });
+      else
+        notify(r === 'added' ? `${product.name} added to compare` : 'Removed from compare', {
+          type: 'info',
+          action:
+            r === 'added' ? (
+              <Link to="/compare" className="shrink-0 text-xs font-semibold underline underline-offset-2">
+                Compare
+              </Link>
+            ) : undefined,
+        });
     },
     toggleWish: () => {
       const added = wl.toggle(product.id);
@@ -36,7 +47,7 @@ export function useProductActions(product) {
 /** Product card: portrait photo, frosted actions, serif name, price row with round add-to-cart. */
 export default function ProductCard({ product, className = '' }) {
   const { setQuickView } = useUI();
-  const { addToCart, toggleWish, wished, outOfStock } = useProductActions(product);
+  const { addToCart, toggleWish, wished, outOfStock, compared, toggleCompare } = useProductActions(product);
   const href = `/product/${product.slug}`;
   const badge = outOfStock ? 'Sold out' : product.discount ? `-${Math.round(product.discount * 100)}%` : product.isNew ? 'New' : product.bestSeller ? 'Bestseller' : null;
   const badgeCls = badge?.startsWith('-') ? 'bg-clay text-white' : badge === 'Sold out' ? 'bg-ink/75 text-white' : badge === 'New' ? 'bg-forest text-white' : 'bg-white/90 text-forest';
@@ -63,6 +74,20 @@ export default function ProductCard({ product, className = '' }) {
         >
           <Heart size={15} fill={wished ? 'currentColor' : 'none'} />
         </button>
+        {product.type === 'plant' && (
+          <button
+            type="button"
+            onClick={toggleCompare}
+            aria-pressed={compared}
+            aria-label={compared ? `Remove ${product.name} from compare` : `Compare ${product.name}`}
+            title={compared ? 'Remove from compare' : 'Compare'}
+            className={`absolute right-2.5 top-[52px] grid h-9 w-9 place-items-center rounded-full border border-white/60 backdrop-blur-md transition ${
+              compared ? 'bg-forest text-white' : 'bg-white/70 text-forest hover:bg-white sm:opacity-0 sm:focus-visible:opacity-100 sm:group-hover:opacity-100'
+            }`}
+          >
+            <Scale size={15} />
+          </button>
+        )}
 
         {/* quick view: slides up on hover (desktop), focusable for keyboard users */}
         <button
@@ -102,6 +127,16 @@ export default function ProductCard({ product, className = '' }) {
               {product.originalPrice && <span className="text-xs text-muted line-through">{money(product.originalPrice)}</span>}
             </span>
           </div>
+          {outOfStock ? (
+            <Link
+              to={`${href}#notify`}
+              aria-label={`Notify me when ${product.name} is back in stock`}
+              title="Notify me when back in stock"
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-mist text-forest transition hover:bg-forest hover:text-white"
+            >
+              <Bell size={16} />
+            </Link>
+          ) : (
           <button
             type="button"
             onClick={() => addToCart()}
@@ -116,6 +151,7 @@ export default function ProductCard({ product, className = '' }) {
               </span>
             )}
           </button>
+          )}
         </div>
       </div>
     </article>

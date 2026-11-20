@@ -99,4 +99,39 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
+  /* Slim, rounded sage scrollbar — subtle until hovered */
+  .thin-scrollbar {
+    scrollbar-gutter: stable;
+  }
+  .thin-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .thin-scrollbar::-webkit-scrollbar-button {
+    display: none;
+    height: 0;
+  }
+  .thin-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 6px 0;
+  }
+  .thin-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(143, 168, 143, 0.35);
+    border-radius: 9999px;
+    transition: background-color 0.2s;
+  }
+  .thin-scrollbar:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(143, 168, 143, 0.75);
+  }
+  .thin-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #2f6245;
+  }
+  /* Firefox (and browsers without ::-webkit-scrollbar) */
+  @supports not selector(::-webkit-scrollbar) {
+    .thin-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(143, 168, 143, 0.6) transparent;
+    }
+  }
 }

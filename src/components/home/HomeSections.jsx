@@ -41,6 +41,12 @@ export function Hero() {
             <Link to="/shop" className="btn-primary h-11 px-6 ring-1 ring-white/25">
               Shop Now
             </Link>
+            <Link
+              to="/plant-finder"
+              className="inline-flex h-11 items-center gap-2 rounded-md bg-white/10 px-5 text-sm font-medium text-white ring-1 ring-white/30 backdrop-blur-md transition hover:bg-white/20"
+            >
+              <Sparkles size={15} /> Find my plant
+            </Link>
             <button onClick={() => setVideo(true)} className="group inline-flex items-center gap-2 text-left text-xs font-medium leading-tight text-white">
               <PlayCircle size={34} strokeWidth={1.3} className="transition group-hover:scale-105" />
               <span>
@@ -386,7 +392,7 @@ export function SaleBanner() {
                 </Link>
               </div>
 
-              <p className="mt-6 text-[11px] text-white/50">Demo promotion on selected plants. Discount shown at checkout; pots and planters excluded.</p>
+              <p className="mt-6 text-[11px] text-white/50">Offer applies to selected plants while stocks last. Discount shown at checkout; pots and planters excluded.</p>
             </div>
           </div>
 
@@ -595,7 +601,7 @@ export function BlogPreview() {
               The journal
             </p>
             <h2 id="blog-title" className="mt-4 text-[34px] font-semibold leading-tight md:text-[44px]">
-              From the <em className="font-serif italic text-botanical">GreenVibe</em> blog
+              From the <em className="font-serif italic text-botanical">Verdelle</em> journal
             </h2>
             <p className="mt-3 max-w-md text-[15px] leading-relaxed text-muted">Grow your plant knowledge with expert tips, care guides and a little daily inspiration.</p>
           </div>

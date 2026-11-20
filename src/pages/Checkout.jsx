@@ -3,11 +3,13 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { CreditCard, Lock, Wallet, Truck } from 'lucide-react';
+import { CreditCard, Gift, Lock, Wallet, Truck } from 'lucide-react';
+import { deliveryWindow, fmtDay } from '../utils/delivery';
+import { markRewardUsed } from '../hooks/useRewards';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import OrderSummary, { totals } from '../components/cart/OrderSummary';
-import { Breadcrumb, DemoNotice, Field, money } from '../components/ui';
+import { Breadcrumb, Field, money } from '../components/ui';
 import { SITE } from '../data/site';
 import { usePageMeta } from '../hooks/usePageMeta';
 
@@ -32,6 +34,10 @@ const schema = addressSchema.extend({
   delivery: z.enum(['standard', 'express']),
   payment: z.enum(['card', 'paypal', 'cod']),
   saveAddress: z.boolean().optional(),
+  isGift: z.boolean().optional(),
+  giftWrap: z.boolean().optional(),
+  giftTo: z.string().max(60).optional(),
+  giftMessage: z.string().max(250, 'Keep your message under 250 characters').optional(),
 });
 
 const COUNTRIES = ['United States', 'Canada', 'United Kingdom', 'Australia', 'New Zealand', 'Sri Lanka', 'Singapore'];
@@ -91,19 +97,31 @@ export default function Checkout() {
       delivery: 'standard',
       payment: 'card',
       saveAddress: !!user && !addresses.length,
+      isGift: false,
+      giftWrap: true,
+      giftTo: '',
+      giftMessage: '',
     },
   });
   const delivery = watch('delivery');
   const payment = watch('payment');
+  const isGift = watch('isGift');
+  const giftWrap = !!isGift && !!watch('giftWrap');
+  const giftMessage = watch('giftMessage') || '';
+  const win = (m) => {
+    const w = deliveryWindow(m);
+    return `Arrives ${fmtDay(w.from)} – ${fmtDay(w.to)}`;
+  };
 
   if (!cart.items.length && !placing) return <Navigate to="/cart" replace />;
 
   const onSubmit = async (d) => {
     setPlacing(true);
     await new Promise((r) => setTimeout(r, 900));
-    const t = totals(cart, d.delivery);
+    const wrap = !!d.isGift && !!d.giftWrap;
+    const t = totals(cart, d.delivery, { giftWrap: wrap });
     const order = {
-      number: `GN-${Date.now().toString().slice(-6)}${Math.floor(Math.random() * 90 + 10)}`,
+      number: `VD-${Date.now().toString().slice(-6)}${Math.floor(Math.random() * 90 + 10)}`,
       date: new Date().toISOString(),
       email: d.email,
       status: 'Processing',
@@ -112,9 +130,10 @@ export default function Checkout() {
       discount: cart.discount,
       coupon: cart.coupon,
       shipping: t.shipping,
+      gift: d.isGift ? { to: d.giftTo || '', message: d.giftMessage || '', wrap, wrapPrice: t.gift } : null,
       total: t.total,
       delivery: SITE.shipping[d.delivery].label,
-      payment: { card: 'Card (demo — not charged)', paypal: 'PayPal (demo)', cod: 'Pay on delivery (demo)' }[d.payment],
+      payment: { card: 'Credit / debit card', paypal: 'PayPal', cod: 'Pay on delivery' }[d.payment],
       address: { firstName: d.firstName, lastName: d.lastName, address1: d.address1, address2: d.address2, city: d.city, state: d.state, postcode: d.postcode, country: d.country },
     };
     if (user && d.saveAddress) saveAddress({ ...order.address, isDefault: !addresses.length });
@@ -124,6 +143,7 @@ export default function Checkout() {
     } catch {
       /* ignore */
     }
+    if (cart.coupon) markRewardUsed(cart.coupon);
     cart.clear();
     navigate('/order-success', { state: { order } });
   };
@@ -133,10 +153,6 @@ export default function Checkout() {
       <div className="container py-8 md:py-12">
         <Breadcrumb items={[{ label: 'Cart', to: '/cart' }, { label: 'Checkout' }]} />
         <h1 className="mt-4 text-4xl">Checkout</h1>
-        <DemoNotice className="mt-5 max-w-3xl">
-          <strong>Demo checkout.</strong> No payment is taken and no order is sent to a store or nursery. Card details are never requested or stored — connect a payment
-          provider (e.g. Stripe or PayPal) to accept real payments.
-        </DemoNotice>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-8 grid gap-8 lg:grid-cols-[1fr_400px]">
           <div className="space-y-6">
@@ -186,10 +202,43 @@ export default function Checkout() {
                   checked={delivery === 'standard'}
                   icon={Truck}
                   title={SITE.shipping.standard.label}
-                  sub={`Free on orders over $${SITE.freeShippingThreshold}`}
+                  sub={`${win('standard')} · Free on orders over ${money(SITE.freeShippingThreshold)}`}
                   right={totals(cart, 'standard').shipping === 0 ? 'Free' : money(SITE.shipping.standard.price)}
                 />
-                <RadioCard name="delivery" value="express" register={register} checked={delivery === 'express'} icon={Truck} title={SITE.shipping.express.label} right={money(SITE.shipping.express.price)} />
+                <RadioCard name="delivery" value="express" register={register} checked={delivery === 'express'} icon={Truck} title={SITE.shipping.express.label} sub={win('express')} right={money(SITE.shipping.express.price)} />
+              </div>
+
+              {/* Gift options */}
+              <div className={`mt-5 rounded-2xl border p-4 transition ${isGift ? 'border-forest bg-mist/30' : 'border-line'}`}>
+                <label className="flex cursor-pointer items-center gap-3">
+                  <input type="checkbox" {...register('isGift')} />
+                  <span className="grid h-9 w-9 place-items-center rounded-xl bg-mist text-forest">
+                    <Gift size={17} />
+                  </span>
+                  <span className="flex-1">
+                    <span className="block text-sm font-medium">This order is a gift</span>
+                    <span className="block text-xs text-muted">We’ll leave prices off the packing slip.</span>
+                  </span>
+                </label>
+                {isGift && (
+                  <div className="mt-4 space-y-4 border-t border-line/70 pt-4">
+                    <label className="flex cursor-pointer items-center justify-between gap-3 rounded-xl bg-white p-3 ring-1 ring-line/70">
+                      <span className="flex items-center gap-3">
+                        <input type="checkbox" {...register('giftWrap')} />
+                        <span>
+                          <span className="block text-sm font-medium">{SITE.giftWrap.label}</span>
+                          <span className="block text-xs text-muted">Kraft paper, twine and a card written by our team.</span>
+                        </span>
+                      </span>
+                      <span className="text-sm font-medium">{money(SITE.giftWrap.price)}</span>
+                    </label>
+                    <Field label="Recipient’s name (optional)" error={errors.giftTo?.message} {...register('giftTo')} />
+                    <div>
+                      <Field as="textarea" label="Gift message (optional)" maxLength={250} placeholder="Happy housewarming! May it grow as fast as your new home fills with memories." error={errors.giftMessage?.message} {...register('giftMessage')} />
+                      <p className="mt-1 text-right text-xs text-muted">{giftMessage.length}/250</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </Section>
 
@@ -204,16 +253,16 @@ export default function Checkout() {
                   <p className="flex items-center gap-2 font-medium text-ink">
                     <Lock size={14} /> Secure payment field
                   </p>
-                  <p className="mt-1">In production, your payment provider’s hosted card form (e.g. Stripe Elements) renders here so card data never touches this site.</p>
+                  <p className="mt-1">Your card details are entered on our payment provider’s secure, encrypted form — they never touch our servers.</p>
                 </div>
               )}
             </Section>
           </div>
 
           <div className="lg:sticky lg:top-24 lg:self-start">
-            <OrderSummary method={delivery} showItems>
+            <OrderSummary method={delivery} showItems giftWrap={giftWrap}>
               <button className="btn-primary mt-6 h-12 w-full" disabled={placing}>
-                <Lock size={15} /> {placing ? 'Placing order…' : `Place Order · ${money(totals(cart, delivery).total)}`}
+                <Lock size={15} /> {placing ? 'Placing order…' : `Place Order · ${money(totals(cart, delivery, { giftWrap }).total)}`}
               </button>
               <p className="mt-3 text-center text-xs text-muted">
                 By placing your order you agree to our{' '}

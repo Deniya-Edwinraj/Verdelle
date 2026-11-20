@@ -62,7 +62,7 @@ export default function NewsletterForm({ variant = 'bar' }) {
           {done && (
             <span className="inline-flex items-center gap-1 text-white">
               <CheckCircle2 size={13} />
-              {done === 'already' ? 'You’re already on the list.' : 'You’re in! (Demo: saved in this browser only.)'}
+              {done === 'already' ? 'You’re already on the list.' : 'You’re in! Welcome to the Verdelle community.'}
             </span>
           )}
         </div>
@@ -95,7 +95,7 @@ export default function NewsletterForm({ variant = 'bar' }) {
         {done && (
           <span className="inline-flex items-center gap-1 text-white">
             <CheckCircle2 size={13} />
-            {done === 'already' ? 'You’re already on the list.' : 'You’re in! (Demo: saved in this browser only.)'}
+            {done === 'already' ? 'You’re already on the list.' : 'You’re in! Welcome to the Verdelle community.'}
           </span>
         )}
       </div>

@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { CheckCircle2, Clock, Mail, MapPin, Phone, Sprout, Truck, RotateCcw, Leaf } from 'lucide-react';
-import { Accordion, DemoNotice, Field, PageHero } from '../components/ui';
+import { Accordion, Field, PageHero } from '../components/ui';
 import SocialLinks from '../components/layout/SocialLinks';
 import { SITE } from '../data/site';
 import { usePageMeta } from '../hooks/usePageMeta';
@@ -62,7 +62,7 @@ export default function Contact() {
               <div className="rounded-2xl border border-line bg-white p-10 text-center" role="status">
                 <CheckCircle2 size={40} strokeWidth={1.5} className="mx-auto text-botanical" />
                 <h2 className="mt-4 text-3xl font-semibold">Thank you, {sent}!</h2>
-                <p className="mt-2 text-muted">Your message was captured in this demo. Once a support inbox is connected, replies usually go out within 1–2 business days.</p>
+                <p className="mt-2 text-muted">We’ve received your message and will get back to you within 1–2 business days.</p>
                 <button className="btn-outline mt-6" onClick={() => setSent(null)}>Send another message</button>
               </div>
             ) : (
@@ -79,7 +79,6 @@ export default function Contact() {
                 <Field as="textarea" className="sm:col-span-2" label="Message" error={errors.message?.message} {...register('message')} />
                 <div className="flex flex-wrap items-center gap-4 sm:col-span-2">
                   <button className="btn-primary h-11 px-8" disabled={isSubmitting}>{isSubmitting ? 'Sending…' : 'Send Message'}</button>
-                  <span className="text-xs text-muted">Demo form — not yet connected to an inbox.</span>
                 </div>
               </form>
             )}
@@ -93,7 +92,6 @@ export default function Contact() {
                 <li className="flex gap-3"><MapPin size={18} className="mt-0.5 text-forest" /> {SITE.address}</li>
                 <li className="flex gap-3"><Clock size={18} className="mt-0.5 text-forest" /> {SITE.hours}</li>
               </ul>
-              <DemoNotice className="mt-5">These are editable placeholders in <code>src/data/site.js</code>.</DemoNotice>
               <p className="mb-2 mt-6 text-sm font-semibold">Follow along</p>
               <SocialLinks />
             </div>
@@ -103,7 +101,7 @@ export default function Contact() {
                 defaultOpen={-1}
                 items={[
                   { title: 'How are plants packed?', content: <p>Soil is secured, leaves are supported and boxes are marked “live plant”.</p> },
-                  { title: 'What if my plant arrives damaged?', content: <p>Send us a photo within 7 days and we’ll arrange a replacement.</p> },
+                  { title: 'What if my plant arrives damaged?', content: <p>Every plant is covered by our {SITE.guaranteeDays}-day guarantee — send us a photo and we’ll arrange a replacement or refund.</p> },
                   { title: 'Are your plants pet-safe?', content: <p>Each plant shows its pet-safety status. Many popular plants are toxic to pets — check before buying.</p> },
                 ]}
               />

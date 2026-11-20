@@ -123,8 +123,43 @@ export function plantFit(species) {
   return { h: sp.h + 80 + (sp.below ? Math.max(0, sp.below - 80) : 0), w: Math.max(sp.w, 100) };
 }
 
+/**
+ * Branded gift card artwork. The background fills whatever box it's given, and the card content is
+ * drawn at a credit-card ratio and scaled to fit (never cropped), so it works as a wide card or a square thumbnail.
+ */
+export function GiftCardArt({ product, className = '', amount, design }) {
+  const designs = { forest: ['#0B2418', '#2F6245', '#FFFFFF'], sage: ['#8FA88F', '#DDE8DC', '#0B2418'], terracotta: ['#B5663F', '#E9C2A6', '#FFFFFF'] };
+  const [from, to, ink] = designs[design || product?.design] || designs.forest;
+  const value = amount ?? product?.amount;
+  return (
+    <span
+      className={`relative block overflow-hidden ${className}`}
+      style={{ background: `linear-gradient(135deg, ${from}, ${to})` }}
+      role="img"
+      aria-label={`Verdelle gift card${value ? ` worth $${value}` : ''}`}
+    >
+      <svg viewBox="0 0 160 100" preserveAspectRatio="xMidYMid meet" className="absolute inset-0 h-full w-full" aria-hidden="true">
+        <path d="M100 112C100 72 124 46 168 40c-3 42-28 68-68 72Z" fill={ink} opacity=".13" />
+        <path d="M100 112C118 86 138 66 166 44" stroke={ink} strokeWidth=".8" fill="none" opacity=".3" />
+        <text x="12" y="24" fill={ink} fontFamily="Playfair Display, Georgia, serif" fontStyle="italic" fontSize="15">
+          Verdelle
+        </text>
+        <text x="12.5" y="34" fill={ink} opacity=".7" fontFamily="DM Sans, sans-serif" fontSize="4.6" letterSpacing="1.6">
+          GIFT CARD
+        </text>
+        {value != null && (
+          <text x="12" y="86" fill={ink} fontFamily="Playfair Display, Georgia, serif" fontWeight="600" fontSize="26">
+            ${value}
+          </text>
+        )}
+      </svg>
+    </span>
+  );
+}
+
 export function ProductImage({ product, view = 'front', className = '', bg = '#F2F3F0' }) {
   const uid = useUid();
+  if (product.type === 'giftcard') return <GiftCardArt product={product} className={className} />;
   const front = PHOTOS.products[product.slug];
   const extra = PHOTOS.gallery?.[`${product.slug}-${view}`];
   const a = product.art;

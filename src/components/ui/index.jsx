@@ -275,18 +275,88 @@ export function PageHeader({ title, subtitle, crumbs, eyebrow }) {
   );
 }
 
+/** Splits a title so its final word can be set in an italic accent. */
+function splitTitle(title) {
+  if (typeof title !== 'string') return [title, null];
+  const words = title.trim().split(/\s+/);
+  if (words.length < 2) return [title, null];
+  return [words.slice(0, -1).join(' '), words[words.length - 1]];
+}
+
 /** Botanical photo hero used at the top of inner pages. */
 export function PageHero({ title, subtitle, crumbs, eyebrow, plants, children }) {
+  const [lead, accent] = splitTitle(title);
   return (
-    <section className="relative overflow-hidden bg-forest text-white">
-      <PageBannerScene plants={plants} className="absolute inset-0 h-full w-full" />
-      <div className="container relative py-14 md:py-20">
-        {crumbs && <Breadcrumb items={crumbs} light />}
-        {eyebrow && <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.2em] text-mist">{eyebrow}</p>}
-        <h1 className={`max-w-xl text-4xl leading-tight text-white md:text-[52px] ${eyebrow ? 'mt-2' : 'mt-6'}`}>{title}</h1>
-        {subtitle && <p className="mt-4 max-w-lg text-[15px] leading-relaxed text-white/85">{subtitle}</p>}
-        {children}
+    <section className="relative isolate overflow-hidden bg-forest-900 text-white">
+      {/* Photo with a slow, subtle zoom */}
+      <div aria-hidden="true" className="absolute inset-0 -z-10 motion-safe:animate-slow-zoom">
+        <PageBannerScene plants={plants} className="absolute inset-0 h-full w-full" />
       </div>
+      {/* Layered tint: deep forest on the left, soft vignette top and bottom */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10"
+        style={{
+          background:
+            'linear-gradient(100deg, rgba(11,36,24,.92) 0%, rgba(11,36,24,.72) 38%, rgba(11,36,24,.25) 70%, rgba(11,36,24,.05) 100%), linear-gradient(180deg, rgba(11,36,24,.35) 0%, rgba(11,36,24,0) 30%, rgba(11,36,24,0) 70%, rgba(11,36,24,.45) 100%)',
+        }}
+      />
+      {/* Soft sage glow behind the headline */}
+      <div aria-hidden="true" className="pointer-events-none absolute -left-32 top-1/2 -z-10 h-[420px] w-[420px] -translate-y-1/2 rounded-full bg-botanical/40 blur-3xl" />
+
+      <div className="container relative flex min-h-[340px] flex-col justify-center pb-24 pt-12 md:min-h-[460px] md:pb-32 md:pt-16">
+        {crumbs && (
+          <div className="motion-safe:animate-fade-in">
+            <div className="inline-flex rounded-full border border-white/15 bg-white/[0.07] px-4 py-1.5 backdrop-blur-md">
+              <Breadcrumb items={crumbs} light />
+            </div>
+          </div>
+        )}
+
+        {eyebrow && (
+          <p className="mt-8 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-sage-soft motion-safe:animate-fade-up">
+            <span aria-hidden="true" className="h-px w-10 bg-sage-soft/70" />
+            {eyebrow}
+          </p>
+        )}
+
+        <h1
+          className={`max-w-2xl text-[40px] font-medium leading-[1.08] tracking-tight text-white motion-safe:animate-fade-up md:text-[64px] ${eyebrow ? 'mt-4' : 'mt-8'}`}
+          style={{ animationDelay: '80ms' }}
+        >
+          {lead}
+          {accent && (
+            <>
+              {' '}
+              <em className="font-normal italic text-sage-soft">{accent}</em>
+            </>
+          )}
+        </h1>
+
+        {subtitle && (
+          <p
+            className="mt-6 max-w-lg border-l border-white/25 pl-5 text-[15px] leading-relaxed text-white/80 motion-safe:animate-fade-up md:text-base"
+            style={{ animationDelay: '160ms' }}
+          >
+            {subtitle}
+          </p>
+        )}
+        {children && (
+          <div className="motion-safe:animate-fade-up" style={{ animationDelay: '220ms' }}>
+            {children}
+          </div>
+        )}
+      </div>
+
+      {/* Curved transition into the page */}
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 1440 80"
+        preserveAspectRatio="none"
+        className="absolute inset-x-0 -bottom-px h-10 w-full text-warm md:h-16"
+      >
+        <path fill="currentColor" d="M0 80V40C240 8 480 0 720 0s480 8 720 40v40H0Z" />
+      </svg>
     </section>
   );
 }

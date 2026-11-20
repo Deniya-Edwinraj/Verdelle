@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import {
-  ArrowRight, BookOpen, ChevronDown, Droplets, Flower2, Heart, Leaf, Mail, Menu, Moon, PawPrint, Phone, Search, ShoppingBag, Sparkles, Sprout, Sun, TriangleAlert, User,
+  ArrowRight, BookOpen, ChevronDown, Compass, CreditCard, Gift, GraduationCap, Repeat, Sofa, Stethoscope, Droplets, Flower2, Heart, Leaf, Mail, Menu, Moon, PawPrint, Phone, Scale, Search, ShoppingBag, Sparkles, Sprout, Sun, TriangleAlert, User,
 } from 'lucide-react';
 import { Logo, money } from '../ui';
 import { NAV, SITE } from '../../data/site';
@@ -12,7 +12,7 @@ import { useAuth } from '../../context/AuthContext';
 import MobileNav from './MobileNav';
 import SearchOverlay from './SearchOverlay';
 
-const MENU_ICONS = { leaf: Leaf, sparkles: Sparkles, sprout: Sprout, moon: Moon, paw: PawPrint, pot: Flower2, book: BookOpen, drop: Droplets, sun: Sun, alert: TriangleAlert };
+const MENU_ICONS = { compass: Compass, scale: Scale, stethoscope: Stethoscope, sofa: Sofa, graduation: GraduationCap, gift: Gift, card: CreditCard, repeat: Repeat, leaf: Leaf, sparkles: Sparkles, sprout: Sprout, moon: Moon, paw: PawPrint, pot: Flower2, book: BookOpen, drop: Droplets, sun: Sun, alert: TriangleAlert };
 
 function Dropdown({ item, open, setOpen }) {
   const ref = useRef(null);
@@ -80,7 +80,7 @@ export default function Header() {
   const { count } = useCart();
   const { ids } = useWishlist();
   const { user } = useAuth();
-  const { setSearchOpen, setMenuOpen } = useUI();
+  const { setSearchOpen, setMenuOpen, openCart } = useUI();
   const [open, setOpen] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const { pathname, search } = useLocation();
@@ -156,12 +156,12 @@ export default function Header() {
               <Heart size={19} />
               {ids.length > 0 && <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-botanical" aria-hidden="true" />}
             </Link>
-            <Link to="/cart" className="relative grid h-10 w-10 place-items-center rounded-full hover:bg-mist/60" aria-label={`Cart, ${count} items`}>
+            <button type="button" onClick={() => openCart()} className="relative grid h-10 w-10 place-items-center rounded-full hover:bg-mist/60" aria-label={`Open cart, ${count} items`}>
               <ShoppingBag size={19} />
               <span className={`absolute right-0.5 top-0.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-forest px-1 text-[10px] font-semibold text-white transition-transform ${count ? 'scale-100' : 'scale-0'}`} aria-hidden="true">
                 {count}
               </span>
-            </Link>
+            </button>
             <Link to="/shop" className="btn-primary ml-2 hidden h-9 px-4 text-xs sm:inline-flex">
               Shop Now
             </Link>

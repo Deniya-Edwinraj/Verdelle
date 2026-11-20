@@ -3,6 +3,10 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import QuickViewModal from '../products/QuickViewModal';
+import CartDrawer from '../cart/CartDrawer';
+import CompareBar from '../products/CompareBar';
+import NewsletterPopup from '../forms/NewsletterPopup';
+import CookieConsent from './CookieConsent';
 import { LoadingSkeleton, ScrollToTop } from '../ui';
 
 function HashScroll() {
@@ -28,6 +32,10 @@ export default function Layout() {
       </main>
       <Footer />
       <QuickViewModal />
+      <CartDrawer />
+      <CompareBar />
+      <NewsletterPopup />
+      <CookieConsent />
     </div>
   );
 }

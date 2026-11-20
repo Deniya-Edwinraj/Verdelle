@@ -47,7 +47,7 @@ export default function Catalog({ products, initialSort = 'popular', resetKey, o
   return (
     <div className="grid gap-8 lg:grid-cols-[230px_1fr] lg:gap-10">
       <aside className="hidden lg:block" aria-label="Filters">
-        <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto pr-2">
+        <div className="thin-scrollbar sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto pr-3">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="font-sans text-sm font-semibold uppercase tracking-wider text-ink">Filters</h2>
             {active > 0 && (
@@ -137,7 +137,7 @@ export default function Catalog({ products, initialSort = 'popular', resetKey, o
                 <X size={20} />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto px-5 py-5">
+            <div className="thin-scrollbar flex-1 overflow-y-auto px-5 py-5">
               <ProductFilters filters={filters} setFilters={setFilters} counts={counts} />
             </div>
             <div className="grid grid-cols-2 gap-3 border-t border-line p-4">

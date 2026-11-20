@@ -26,6 +26,16 @@ const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const Terms = lazy(() => import('./pages/Terms'));
 const PhotoCredits = lazy(() => import('./pages/PhotoCredits'));
 const NotFound = lazy(() => import('./pages/NotFound'));
+const PlantFinder = lazy(() => import('./pages/PlantFinder'));
+const Compare = lazy(() => import('./pages/Compare'));
+const TrackOrder = lazy(() => import('./pages/TrackOrder'));
+const PlantDoctor = lazy(() => import('./pages/PlantDoctor'));
+const Subscription = lazy(() => import('./pages/Subscription'));
+const GiftCards = lazy(() => import('./pages/GiftCards'));
+const Gifts = lazy(() => import('./pages/Gifts'));
+const PlantStyling = lazy(() => import('./pages/PlantStyling'));
+const CareCourse = lazy(() => import('./pages/CareCourse'));
+const Rewards = lazy(() => import('./pages/Rewards'));
 
 export default function App() {
   return (
@@ -58,6 +68,18 @@ export default function App() {
         <Route path="privacy-policy" element={<PrivacyPolicy />} />
         <Route path="terms" element={<Terms />} />
         <Route path="photo-credits" element={<PhotoCredits />} />
+        <Route path="plant-finder" element={<PlantFinder />} />
+        <Route path="compare" element={<Compare />} />
+        <Route path="track-order" element={<TrackOrder />} />
+        <Route path="plant-doctor" element={<PlantDoctor />} />
+        <Route path="subscription" element={<Subscription />} />
+        <Route path="gift-cards" element={<GiftCards />} />
+        <Route path="gifts" element={<Gifts />} />
+        <Route path="plant-styling" element={<PlantStyling />} />
+        <Route path="care-course" element={<CareCourse />} />
+        <Route path="rewards" element={<Rewards />} />
+        <Route path="account/rewards" element={<Account tab="rewards" />} />
+        <Route path="account/subscriptions" element={<Account tab="subscriptions" />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

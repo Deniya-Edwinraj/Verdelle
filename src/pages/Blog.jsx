@@ -9,7 +9,7 @@ import { fmtDate } from '../utils/format';
 import { usePageMeta } from '../hooks/usePageMeta';
 
 export default function Blog() {
-  usePageMeta('GreenVibe Blog', 'Plant picks, care tips and styling ideas from the GreenVibe blog by Verdelle.');
+  usePageMeta('The Verdelle Journal', 'Plant picks, care tips and styling ideas from The Verdelle Journal.');
   const [tag, setTag] = useState('All');
   const [q, setQ] = useState('');
   const featured = blogPosts.find((p) => p.featured);
@@ -18,7 +18,7 @@ export default function Blog() {
 
   return (
     <>
-      <PageHero eyebrow="GreenVibe Blog" title="Stories for plant people" subtitle="Expert tips, plant picks and a little daily inspiration." crumbs={[{ label: 'Home', to: '/' }, { label: 'Blog' }]} plants={['boston-fern', 'syngonium']} />
+      <PageHero eyebrow="The Verdelle Journal" title="Stories for plant people" subtitle="Expert tips, plant picks and a little daily inspiration." crumbs={[{ label: 'Home', to: '/' }, { label: 'Blog' }]} plants={['boston-fern', 'syngonium']} />
       {showFeatured && featured && (
         <section className="container pt-12">
           <Link to={`/blog/${featured.slug}`} className="group grid overflow-hidden rounded-2xl bg-white shadow-soft ring-1 ring-line/70 transition hover:shadow-lift md:grid-cols-2">
