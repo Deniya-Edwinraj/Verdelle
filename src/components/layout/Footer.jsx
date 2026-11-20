@@ -23,7 +23,7 @@ const COLS = [
       ['Rewards', '/rewards'],
       ['Refer a Friend', '/refer'],
       ['Office Plants', '/office-plants'],
-      ['#MyVerdelle', '/community'],
+      ['MyVerdelle', '/community'],
       ['About Us', '/about'],
       ['Contact', '/contact'],
     ],

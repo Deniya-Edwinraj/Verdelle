@@ -66,7 +66,7 @@ export const GIFT_MENU = [
   { label: 'Plant Subscription', to: '/subscription', icon: 'repeat', desc: 'A new plant delivered on repeat' },
   { label: 'Verdelle Leaves', to: '/rewards', icon: 'leaf', desc: 'Earn rewards on every order' },
   { label: 'Refer a Friend', to: '/refer', icon: 'users', desc: 'Give $10, get 100 leaves' },
-  { label: '#MyVerdelle', to: '/community', icon: 'camera', desc: 'Plants in our customers’ homes' },
+  { label: 'MyVerdelle', to: '/community', icon: 'camera', desc: 'Plants in our customers’ homes' },
 ];
 
 export const NAV = [

@@ -29,9 +29,9 @@ function shrink(file, max = 900) {
   });
 }
 
-/** #MyVerdelle — customer photos shared here or attached to product reviews. */
+/** MyVerdelle — customer photos shared here or attached to product reviews. */
 export default function Community() {
-  usePageMeta('#MyVerdelle', 'Real plants in real homes — photos shared by the Verdelle community.');
+  usePageMeta('MyVerdelle', 'Real plants in real homes — photos shared by the Verdelle community.');
   const notify = useToast();
   const [posts, setPosts] = useLocalStorage('gn_gallery', []);
   const [reviews] = useLocalStorage('gn_reviews', {});
@@ -79,10 +79,10 @@ export default function Community() {
   return (
     <>
       <PageHero
-        eyebrow={`${SITE.instagramHandle} · #MyVerdelle`}
+        eyebrow={`${SITE.instagramHandle} · MyVerdelle`}
         title="Plants in their happy place"
         subtitle="Real plants in real homes, shared by our community. Show us yours and inspire the next plant parent."
-        crumbs={[{ label: 'Home', to: '/' }, { label: '#MyVerdelle' }]}
+        crumbs={[{ label: 'Home', to: '/' }, { label: 'MyVerdelle' }]}
         plants={['monstera', 'pothos']}
       />
 
@@ -217,7 +217,7 @@ export default function Community() {
               <Check size={14} className="mt-0.5 shrink-0 text-botanical" /> By sharing, you agree we may feature your photo on our website and social media with credit.
             </label>
             <button className="mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-forest text-sm font-semibold text-white transition hover:bg-botanical">
-              <Camera size={15} /> Share to #MyVerdelle
+              <Camera size={15} /> Share to MyVerdelle
             </button>
           </form>
         </div>
