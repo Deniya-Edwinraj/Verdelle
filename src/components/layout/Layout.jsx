@@ -7,6 +7,7 @@ import CartDrawer from '../cart/CartDrawer';
 import CompareBar from '../products/CompareBar';
 import NewsletterPopup from '../forms/NewsletterPopup';
 import CookieConsent from './CookieConsent';
+import ChatWidget from './ChatWidget';
 import { LoadingSkeleton, ScrollToTop } from '../ui';
 
 function HashScroll() {
@@ -36,6 +37,7 @@ export default function Layout() {
       <CompareBar />
       <NewsletterPopup />
       <CookieConsent />
+      <ChatWidget />
     </div>
   );
 }

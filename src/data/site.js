@@ -7,6 +7,10 @@ export const SITE = {
   address: '214 Fernwood Lane, Portland, OR 97205, United States',
   hours: 'Mon–Fri 9am–5pm · Sat 10am–2pm',
   instagramHandle: '@verdelle',
+  // WhatsApp number for the “Ask a plant expert” chat (digits only, with country code).
+  whatsapp: '15550142368',
+  // Pay-in-4 messaging (connect a provider such as Klarna or Afterpay before launch).
+  payIn4: { installments: 4, min: 35 },
   // Add real profile URLs to enable these links. Empty = shows a "coming soon" note.
   social: { instagram: '', facebook: '', pinterest: '', youtube: '' },
 
@@ -29,6 +33,7 @@ export const SITE = {
   coupons: {
     GREEN10: { type: 'percent', value: 10, label: '10% off your order' },
     WELCOME5: { type: 'fixed', value: 5, label: '$5 off your order' },
+    FRIEND10: { type: 'fixed', value: 10, min: 40, label: '$10 off your first order (friend referral)' },
   },
 };
 
@@ -51,13 +56,17 @@ export const CARE_MENU = [
   { label: 'Plant Doctor', to: '/plant-doctor', icon: 'stethoscope', desc: 'Diagnose a problem or ask an expert' },
   { label: 'Plant Styling', to: '/plant-styling', icon: 'sofa', desc: 'Free styling advice for your space' },
   { label: 'Free Care Course', to: '/care-course', icon: 'graduation', desc: '5 days to confident plant care' },
+  { label: 'Office Plants', to: '/office-plants', icon: 'building', desc: 'Plant rental for workplaces' },
 ];
 
 export const GIFT_MENU = [
   { label: 'Gift Shop', to: '/gifts', icon: 'gift', desc: 'Plants for every occasion' },
   { label: 'Gift Cards', to: '/gift-cards', icon: 'card', desc: 'Let them choose — emailed instantly' },
+  { label: 'Letterbox Plants', to: '/shop/letterbox', icon: 'mail', desc: 'Fits through the door — no one needs to be home' },
   { label: 'Plant Subscription', to: '/subscription', icon: 'repeat', desc: 'A new plant delivered on repeat' },
   { label: 'Verdelle Leaves', to: '/rewards', icon: 'leaf', desc: 'Earn rewards on every order' },
+  { label: 'Refer a Friend', to: '/refer', icon: 'users', desc: 'Give $10, get 100 leaves' },
+  { label: '#MyVerdelle', to: '/community', icon: 'camera', desc: 'Plants in our customers’ homes' },
 ];
 
 export const NAV = [

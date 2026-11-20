@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
-  ArrowRight, BookOpen, Check, Compass, Copy, Heart, Home, LayoutDashboard, Leaf, LogOut, Mail, MapPin, Package, PackageSearch, PauseCircle, Pencil, PlayCircle, Plus, Repeat, ShoppingBag, Trash2, Truck, User, UserRound, XCircle,
+  ArrowRight, Bell, BellOff, BookOpen, CalendarHeart, CalendarPlus, Cake, Check, Compass, Copy, Heart, Home, LayoutDashboard, Leaf, LogOut, Mail, MapPin, Package, PackageSearch, PauseCircle, Pencil, PlayCircle, Plus, Repeat, ShoppingBag, Trash2, Truck, User, UserRound, XCircle,
 } from 'lucide-react';
 import { REWARDS, SUBSCRIPTION_FREQUENCIES } from '../data/services';
 import { useRewards } from '../hooks/useRewards';
@@ -24,6 +24,7 @@ const TABS = [
   { key: 'orders', label: 'Orders', to: '/account/orders', icon: Package, blurb: 'Track and review your orders' },
   { key: 'subscriptions', label: 'Subscriptions', to: '/account/subscriptions', icon: Repeat, blurb: 'Your plant deliveries on repeat' },
   { key: 'rewards', label: 'Rewards', to: '/account/rewards', icon: Leaf, blurb: `Your ${REWARDS.name}` },
+  { key: 'occasions', label: 'Occasions', to: '/account/occasions', icon: CalendarHeart, blurb: 'Never miss a birthday or anniversary' },
   { key: 'addresses', label: 'Addresses', to: '/account/addresses', icon: MapPin, blurb: 'Where your plants are delivered' },
   { key: 'profile', label: 'Profile', to: '/account/profile', icon: UserRound, blurb: 'Your personal details' },
 ];
@@ -321,6 +322,16 @@ function Subscriptions() {
                     >
                       Skip next box
                     </button>
+                    <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-card px-4 py-2 text-xs font-semibold text-forest transition hover:bg-mist">
+                      <CalendarPlus size={13} /> Move date
+                      <input
+                        type="date"
+                        min={new Date(Date.now() + 2 * 86400000).toISOString().slice(0, 10)}
+                        onChange={(e) => e.target.value && update(s.id, { nextDelivery: new Date(e.target.value + 'T12:00:00').toISOString() }, 'Next box date updated')}
+                        className="sr-only"
+                        aria-label="Choose a new date for your next box"
+                      />
+                    </label>
                     <button onClick={() => update(s.id, { status: 'paused' }, 'Subscription paused')} className="inline-flex items-center gap-1.5 rounded-full bg-card px-4 py-2 text-xs font-semibold text-forest transition hover:bg-mist">
                       <PauseCircle size={13} /> Pause
                     </button>
@@ -339,6 +350,190 @@ function Subscriptions() {
         );
       })}
     </ul>
+  );
+}
+
+/* ---------------- Occasions ---------------- */
+const RELATIONS = ['Partner', 'Mum', 'Dad', 'Friend', 'Family', 'Colleague', 'Me'];
+const OCCASION_TYPES = [
+  ['Birthday', 'birthday'],
+  ['Anniversary', 'birthday'],
+  ['Housewarming', 'housewarming'],
+  ['Mother’s Day', 'birthday'],
+  ['Thank you', 'thank-you'],
+  ['Other', 'birthday'],
+];
+
+function nextOccurrence(mmdd) {
+  const [m, d] = mmdd.split('-').map(Number);
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  let next = new Date(now.getFullYear(), m - 1, d);
+  if (next < now) next = new Date(now.getFullYear() + 1, m - 1, d);
+  return { date: next, days: Math.round((next - now) / 86400000) };
+}
+
+function icsFor(o) {
+  const { date } = nextOccurrence(o.date);
+  const p = (n) => String(n).padStart(2, '0');
+  const day = `${date.getFullYear()}${p(date.getMonth() + 1)}${p(date.getDate())}`;
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Verdelle//Occasions//EN',
+    'BEGIN:VEVENT',
+    `UID:${o.id}@verdelle`,
+    `DTSTART;VALUE=DATE:${day}`,
+    'RRULE:FREQ=YEARLY',
+    `SUMMARY:${o.name}’s ${o.type}`,
+    'DESCRIPTION:Send something green — verdelle gift shop',
+    'BEGIN:VALARM',
+    'TRIGGER:-P7D',
+    'ACTION:DISPLAY',
+    `DESCRIPTION:${o.name}’s ${o.type} is in a week`,
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n');
+  const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${o.name}-${o.type}.ics`.replace(/\s+/g, '-').toLowerCase();
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function Occasions() {
+  const [list, setList] = useLocalStorage('gn_occasions', []);
+  const notify = useToast();
+  const [adding, setAdding] = useState(false);
+  const [form, setForm] = useState({ name: '', type: 'Birthday', relation: 'Friend', date: '' });
+  const [error, setError] = useState('');
+  const sorted = [...list].sort((a, b) => nextOccurrence(a.date).days - nextOccurrence(b.date).days);
+
+  const save = (e) => {
+    e.preventDefault();
+    if (form.name.trim().length < 2) return setError('Add a name');
+    if (!form.date) return setError('Choose a date');
+    setError('');
+    const mmdd = form.date.slice(5);
+    const next = [...list, { id: `occ-${Date.now()}`, name: form.name.trim(), type: form.type, relation: form.relation, date: mmdd, remind: true, created: new Date().toISOString() }];
+    setList(next);
+    setAdding(false);
+    setForm({ name: '', type: 'Birthday', relation: 'Friend', date: '' });
+    notify(next.length === 3 ? `Occasion saved — you’ve earned ${REWARDS.occasionBonus} bonus leaves!` : 'Occasion saved — we’ll remind you a week before');
+  };
+
+  const input = 'h-12 w-full rounded-2xl bg-card/70 px-4 text-sm outline-none ring-1 ring-line/70 transition focus:bg-white focus:ring-2 focus:ring-botanical/40';
+
+  return (
+    <div className="space-y-6">
+      {list.length < 3 && (
+        <div className="flex items-center gap-4 rounded-[22px] bg-mist/60 p-5">
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-white text-forest">
+            <Leaf size={19} />
+          </span>
+          <p className="text-sm text-ink/80">
+            Save <strong>{3 - list.length} more</strong> {3 - list.length === 1 ? 'occasion' : 'occasions'} to earn <strong className="text-forest">{REWARDS.occasionBonus} bonus leaves</strong>. We’ll email you a week before each date.
+          </p>
+        </div>
+      )}
+
+      {adding ? (
+        <form onSubmit={save} noValidate className="rounded-[24px] bg-white p-6 shadow-soft ring-1 ring-line/70">
+          <p className="font-serif text-2xl text-ink">
+            Add an <em className="italic text-botanical">occasion</em>
+          </p>
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <label className="block">
+              <span className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.14em] text-ink/70">Who’s it for?</span>
+              <input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="e.g. Sam" className={input} />
+            </label>
+            <label className="block">
+              <span className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.14em] text-ink/70">Date</span>
+              <input type="date" value={form.date} onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))} className={input} />
+            </label>
+            <label className="block">
+              <span className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.14em] text-ink/70">Occasion</span>
+              <select value={form.type} onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))} className={input}>
+                {OCCASION_TYPES.map(([t]) => (
+                  <option key={t}>{t}</option>
+                ))}
+              </select>
+            </label>
+            <label className="block">
+              <span className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.14em] text-ink/70">Relationship</span>
+              <select value={form.relation} onChange={(e) => setForm((f) => ({ ...f, relation: e.target.value }))} className={input}>
+                {RELATIONS.map((r) => (
+                  <option key={r}>{r}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+          {error && <p className="mt-3 text-sm text-red-800">{error}</p>}
+          <div className="mt-5 flex flex-wrap gap-3">
+            <button className="inline-flex h-11 items-center rounded-full bg-forest px-7 text-sm font-semibold text-white transition hover:bg-botanical">Save occasion</button>
+            <button type="button" onClick={() => setAdding(false)} className="inline-flex h-11 items-center rounded-full border border-line px-6 text-sm font-medium text-forest transition hover:border-forest">
+              Cancel
+            </button>
+          </div>
+        </form>
+      ) : (
+        <button onClick={() => setAdding(true)} className="group flex w-full items-center justify-center gap-3 rounded-[24px] border-2 border-dashed border-line bg-white/50 py-6 text-sm font-semibold text-forest transition hover:border-sage hover:bg-white">
+          <span className="grid h-10 w-10 place-items-center rounded-full bg-mist transition group-hover:rotate-90 group-hover:bg-forest group-hover:text-white">
+            <Plus size={18} />
+          </span>
+          Add an occasion
+        </button>
+      )}
+
+      {sorted.length > 0 && (
+        <ul className="grid gap-4 sm:grid-cols-2">
+          {sorted.map((o) => {
+            const { date, days } = nextOccurrence(o.date);
+            const gift = (OCCASION_TYPES.find(([t]) => t === o.type) || [])[1] || 'birthday';
+            return (
+              <li key={o.id} className={`rounded-[24px] bg-white p-5 shadow-soft ring-1 transition ${days <= 14 ? 'ring-sage' : 'ring-line/70'} ${o.remind ? '' : 'opacity-70'}`}>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="grid h-12 w-12 place-items-center rounded-2xl bg-mist text-forest">
+                      <Cake size={20} />
+                    </span>
+                    <div>
+                      <p className="font-serif text-lg font-semibold text-ink">{o.name}</p>
+                      <p className="text-xs text-muted">
+                        {o.type} · {o.relation}
+                      </p>
+                    </div>
+                  </div>
+                  <span className={`rounded-full px-3 py-1 text-xs font-semibold ${days <= 14 ? 'bg-forest text-white' : 'bg-card text-forest'}`}>{days === 0 ? 'Today!' : `In ${days} days`}</span>
+                </div>
+                <p className="mt-4 text-sm text-ink/80">{date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+                <div className="mt-4 flex flex-wrap gap-2 border-t border-line pt-4">
+                  <Link to={`/gifts?for=${gift}`} className="inline-flex items-center gap-1.5 rounded-full bg-forest px-4 py-2 text-xs font-semibold text-white transition hover:bg-botanical">
+                    Find a gift <ArrowRight size={12} />
+                  </Link>
+                  <button onClick={() => icsFor(o)} className="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-2 text-xs font-semibold text-forest transition hover:bg-mist" title="Add to calendar">
+                    <CalendarPlus size={13} /> Calendar
+                  </button>
+                  <button
+                    onClick={() => setList((cur) => cur.map((x) => (x.id === o.id ? { ...x, remind: !x.remind } : x)))}
+                    aria-pressed={!o.remind}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-2 text-xs font-semibold text-forest transition hover:bg-mist"
+                    title={o.remind ? 'Pause reminders for this date' : 'Turn reminders back on'}
+                  >
+                    {o.remind ? <Bell size={13} /> : <BellOff size={13} />} {o.remind ? 'Reminders on' : 'Paused'}
+                  </button>
+                  <button onClick={() => setList((cur) => cur.filter((x) => x.id !== o.id))} className="ml-auto grid h-8 w-8 place-items-center rounded-full text-muted transition hover:bg-[#F6E7DF] hover:text-[#8A3B1E]" aria-label={`Delete ${o.name}’s ${o.type}`}>
+                    <Trash2 size={13} />
+                  </button>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
   );
 }
 
@@ -638,6 +833,7 @@ export default function Account({ tab }) {
             {tab === 'orders' && <Orders orders={orders} />}
             {tab === 'subscriptions' && <Subscriptions />}
             {tab === 'rewards' && <Rewards />}
+            {tab === 'occasions' && <Occasions />}
             {tab === 'addresses' && <Addresses />}
             {tab === 'profile' && <Profile user={user} />}
           </div>

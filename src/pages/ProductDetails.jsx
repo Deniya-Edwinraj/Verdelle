@@ -3,6 +3,7 @@ import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowRight, BookOpen, Check, Droplets, Gauge, Heart, Lock, Minus, Package, PawPrint, Plus, RotateCcw, Scale, Share2, ShoppingBag, Sparkles, Sun, Thermometer, Truck, Wind, Zap,
 } from 'lucide-react';
+import { PayIn4, SizeGuide } from '../components/products/BuyingHelp';
 import { BoughtTogether, CareReminder, DeliveryEstimate, ReviewsPanel, StockAlert } from '../components/products/ProductExtras';
 import { getProduct, relatedProducts, getProductById, PET } from '../data/products';
 import { getGuide } from '../data/careGuides';
@@ -258,9 +259,15 @@ export default function ProductDetails() {
 
               <div className="mt-4 flex flex-wrap items-center gap-2">
                 <button onClick={openReviews} className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 shadow-sm ring-1 ring-line/70 transition hover:ring-sage">
-                  <RatingStars rating={product.rating} size={13} />
-                  <span className="text-xs font-semibold text-ink">{product.rating.toFixed(1)}</span>
-                  <span className="text-xs text-muted">({product.reviewCount} reviews)</span>
+                  {product.reviewCount ? (
+                    <>
+                      <RatingStars rating={product.rating} size={13} />
+                      <span className="text-xs font-semibold text-ink">{product.rating.toFixed(1)}</span>
+                      <span className="text-xs text-muted">({product.reviewCount} reviews)</span>
+                    </>
+                  ) : (
+                    <span className="text-xs font-medium text-muted">No reviews yet — be the first</span>
+                  )}
                 </button>
                 {isPlant && (
                   <span
@@ -284,6 +291,7 @@ export default function ProductDetails() {
                 )}
               </div>
               {product.discount > 0 && pot && pot !== product.potOptions[0]?.label && <p className="mt-1 text-xs text-muted">Planter add-on is charged at full price.</p>}
+              <PayIn4 amount={price.price * qty} className="mt-2" />
 
               <p className="mt-5 text-[15px] leading-relaxed text-ink/75">{product.description}</p>
 
@@ -302,7 +310,14 @@ export default function ProductDetails() {
 
               {/* Options */}
               <div className="mt-7 space-y-5">
-                <OptionSelector legend="Size" options={product.sizes} value={size} onChange={setSize} />
+                  <div>
+                  <OptionSelector legend="Size" options={product.sizes} value={size} onChange={setSize} />
+                  {isPlant && (
+                    <div className="mt-2 flex justify-end">
+                      <SizeGuide product={product} />
+                    </div>
+                  )}
+                </div>
                 {product.potOptions.length > 0 && <OptionSelector legend="Pot" options={product.potOptions} value={pot} onChange={setPot} priceMode="addon" />}
               </div>
 

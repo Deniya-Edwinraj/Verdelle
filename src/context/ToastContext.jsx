@@ -20,7 +20,7 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={notify}>
       {children}
-      <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-4 z-[80] flex flex-col items-center gap-2 px-4 sm:bottom-6 sm:items-end sm:pr-6">
+      <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-36 z-[80] flex flex-col items-center gap-2 px-4 sm:bottom-24 sm:items-end sm:pr-6">
         {toasts.map((t) => (
           <div key={t.id} className="pointer-events-auto flex w-full max-w-sm animate-fade-up items-center gap-3 rounded-lg bg-forest px-4 py-3 text-sm text-white shadow-lift">
             {t.type === 'success' ? <CheckCircle2 size={18} className="shrink-0 text-mist" /> : <Info size={18} className="shrink-0 text-mist" />}

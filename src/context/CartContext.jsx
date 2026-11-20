@@ -77,7 +77,8 @@ export function CartProvider({ children }) {
 
   const reward = coupon && !SITE.coupons[coupon] ? readRewardCodes().find((r) => r.code === coupon && !r.used) : null;
   const couponInfo = coupon ? SITE.coupons[coupon] || (reward ? { type: 'fixed', value: reward.value, label: `$${reward.value} Verdelle Leaves reward` } : null) : null;
-  const discount = couponInfo ? +(couponInfo.type === 'percent' ? (subtotal * couponInfo.value) / 100 : Math.min(couponInfo.value, subtotal)).toFixed(2) : 0;
+  const belowMin = !!(couponInfo?.min && subtotal < couponInfo.min);
+  const discount = couponInfo && !belowMin ? +(couponInfo.type === 'percent' ? (subtotal * couponInfo.value) / 100 : Math.min(couponInfo.value, subtotal)).toFixed(2) : 0;
 
   const applyCoupon = useCallback(
     (code) => {
@@ -90,7 +91,7 @@ export function CartProvider({ children }) {
   );
 
   return (
-    <CartContext.Provider value={{ items, count, subtotal, saleSavings, add, addGiftCard, update, remove, clear, coupon, couponInfo, discount, applyCoupon, removeCoupon: () => setCoupon(null) }}>
+    <CartContext.Provider value={{ items, count, subtotal, saleSavings, belowMin, add, addGiftCard, update, remove, clear, coupon, couponInfo, discount, applyCoupon, removeCoupon: () => setCoupon(null) }}>
       {children}
     </CartContext.Provider>
   );

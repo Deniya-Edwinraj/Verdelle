@@ -110,6 +110,7 @@ export default function OrderSummary({ method = 'standard', showItems = false, g
 
         <div className="mt-5">
           <CouponForm />
+          {cart.belowMin && <p className="mt-1 text-xs text-clay">Spend {money(cart.couponInfo.min - cart.subtotal)} more to use {cart.coupon}.</p>}
         </div>
 
         <dl className="mt-3 space-y-3 border-t border-dashed border-line pt-5 text-sm">

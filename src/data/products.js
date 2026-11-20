@@ -276,6 +276,39 @@ export const products = [
     stock: 'in-stock', bestSeller: false, isNew: true, collections: ['pots-and-planters'], careGuide: 'drainage-and-repotting', popularity: 60, createdAt: '2026-08-30',
     shipping: 'Ships double-boxed with recycled paper padding.',
   }),
+  make({
+    id: 'gn-025', slug: 'letterbox-peperomia', name: 'Letterbox Peperomia', botanical: 'Peperomia obtusifolia', plantType: 'Foliage', letterbox: true,
+    art: { species: 'peperomia', pot: 'white' },
+    description: 'A glossy, compact peperomia that slips through the letterbox in a flat-pack gift box — with a fold-out planter and a care card. No one needs to be home.',
+    growth: 'Compact — perfect for shelves, desks and windowsills.', matureSize: '15–25 cm tall',
+    sizes: [{ label: 'Letterbox', detail: 'Fits through a standard letterbox · flat-packed', price: 22 }],
+    rating: 0, reviewCount: 0,
+    light: ['Medium','Bright indirect'], watering: 'Every 1–2 weeks', humidity: 'Average', temperature: '16–27°C (60–80°F)', difficulty: 'Easy', pet: 'safe',
+    stock: 'in-stock', bestSeller: false, isNew: true, collections: ['desk-plants'], careGuide: 'beginners-indoor-plant-care', popularity: 55, createdAt: '2026-11-15',
+    shipping: 'Flat-packed to fit through a standard letterbox — no one needs to be home. Usually dispatched within 1–2 business days.',
+  }),
+  make({
+    id: 'gn-026', slug: 'letterbox-succulent-trio', name: 'Letterbox Succulent Trio', botanical: 'Assorted succulents', plantType: 'Succulents', letterbox: true,
+    art: { species: 'aloe', pot: 'terracotta' },
+    description: 'Three sun-loving succulents in a letterbox-friendly gift box with mini terracotta pots — a cheerful thank-you that’s almost impossible to kill.',
+    growth: 'Compact — perfect for shelves, desks and windowsills.', matureSize: '15–25 cm tall',
+    sizes: [{ label: 'Letterbox', detail: 'Fits through a standard letterbox · flat-packed', price: 26 }],
+    rating: 0, reviewCount: 0,
+    light: ['Bright indirect','Direct'], watering: 'Every 3–4 weeks', humidity: 'Average', temperature: '16–27°C (60–80°F)', difficulty: 'Easy', pet: 'unknown',
+    stock: 'in-stock', bestSeller: false, isNew: true, collections: ['desk-plants'], careGuide: 'beginners-indoor-plant-care', popularity: 55, createdAt: '2026-11-15',
+    shipping: 'Flat-packed to fit through a standard letterbox — no one needs to be home. Usually dispatched within 1–2 business days.',
+  }),
+  make({
+    id: 'gn-027', slug: 'letterbox-pothos', name: 'Letterbox Pothos', botanical: 'Epipremnum aureum', plantType: 'Trailing', letterbox: true,
+    art: { species: 'pothos', pot: 'basket' },
+    description: 'A trailing pothos cutting, already rooted, in a flat-packed gift box. Grows fast, forgives forgetful watering and looks lovely on a shelf.',
+    growth: 'Compact — perfect for shelves, desks and windowsills.', matureSize: '15–25 cm tall',
+    sizes: [{ label: 'Letterbox', detail: 'Fits through a standard letterbox · flat-packed', price: 24 }],
+    rating: 0, reviewCount: 0,
+    light: ['Low','Medium','Bright indirect'], watering: 'Every 1–2 weeks', humidity: 'Average', temperature: '16–27°C (60–80°F)', difficulty: 'Easy', pet: 'toxic',
+    stock: 'in-stock', bestSeller: false, isNew: true, collections: ['desk-plants'], careGuide: 'beginners-indoor-plant-care', popularity: 55, createdAt: '2026-11-15',
+    shipping: 'Flat-packed to fit through a standard letterbox — no one needs to be home. Usually dispatched within 1–2 business days.',
+  }),
 ];
 
 /* ---------------- shop categories (URL /shop/:category) ---------------- */
@@ -287,6 +320,7 @@ export const CATEGORIES = [
   { slug: 'flowering', name: 'Flowering', blurb: 'Blooming houseplants that add colour between the greens.', test: (p) => !!p.flowering },
   { slug: 'large-plants', name: 'Large Plants', blurb: 'Statement floor plants available in our Large size.', test: (p) => p.type === 'plant' && p.sizes.some((s) => s.label === 'Large') },
   { slug: 'pots-and-planters', name: 'Pots & Planters', blurb: 'Planters, pots and saucers to give your plants a beautiful home.', test: (p) => p.type === 'planter' },
+  { slug: 'letterbox', name: 'Letterbox Plants', blurb: 'Gift-boxed plants that fit through the letterbox — no one needs to be home to receive them.', test: (p) => !!p.letterbox },
   { slug: 'sale', name: 'Spring Sale', blurb: `${Math.round(SITE.saleDiscount * 100)}% off selected indoor plants while stocks last.`, test: (p) => p.discount > 0 },
 ];
 

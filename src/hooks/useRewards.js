@@ -11,15 +11,18 @@ import { REWARDS } from '../data/services';
 export function useRewards() {
   const { user, orders } = useAuth();
   const [codes, setCodes] = useLocalStorage('gn_reward_codes', []);
+  const [occasions] = useLocalStorage('gn_occasions', []);
+  const occasionBonus = user && occasions.length >= 3 ? REWARDS.occasionBonus : 0;
 
   const fromOrders = orders.map((o) => ({ id: o.number, date: o.date, leaves: Math.floor(o.total * REWARDS.perDollar), label: `Order ${o.number}` }));
   const history = [
     ...(user ? [{ id: 'welcome', date: user.joined || new Date().toISOString(), leaves: REWARDS.welcome, label: 'Welcome bonus' }] : []),
+    ...(occasionBonus ? [{ id: 'occasions', date: occasions[2]?.created || new Date().toISOString(), leaves: occasionBonus, label: 'Saved 3 occasions' }] : []),
     ...fromOrders,
     ...codes.map((c) => ({ id: c.code, date: c.date, leaves: -c.leaves, label: `Redeemed for ${c.code}` })),
   ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-  const earned = (user ? REWARDS.welcome : 0) + fromOrders.reduce((s, x) => s + x.leaves, 0);
+  const earned = (user ? REWARDS.welcome : 0) + occasionBonus + fromOrders.reduce((s, x) => s + x.leaves, 0);
   const spent = codes.reduce((s, c) => s + c.leaves, 0);
   const balance = Math.max(0, earned - spent);
   const tier = [...REWARDS.tiers].reverse().find((t) => earned >= t.min) || REWARDS.tiers[0];

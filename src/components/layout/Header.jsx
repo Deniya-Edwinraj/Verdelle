@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import {
-  ArrowRight, BookOpen, ChevronDown, Compass, CreditCard, Gift, GraduationCap, Repeat, Sofa, Stethoscope, Droplets, Flower2, Heart, Leaf, Mail, Menu, Moon, PawPrint, Phone, Scale, Search, ShoppingBag, Sparkles, Sprout, Sun, TriangleAlert, User,
+  ArrowRight, BookOpen, Building2, Camera, ChevronDown, Compass, CreditCard, Users, Gift, GraduationCap, Repeat, Sofa, Stethoscope, Droplets, Flower2, Heart, Leaf, Mail, Menu, Moon, PawPrint, Phone, Scale, Search, ShoppingBag, Sparkles, Sprout, Sun, TriangleAlert, User,
 } from 'lucide-react';
 import { Logo, money } from '../ui';
 import { NAV, SITE } from '../../data/site';
@@ -12,7 +12,7 @@ import { useAuth } from '../../context/AuthContext';
 import MobileNav from './MobileNav';
 import SearchOverlay from './SearchOverlay';
 
-const MENU_ICONS = { compass: Compass, scale: Scale, stethoscope: Stethoscope, sofa: Sofa, graduation: GraduationCap, gift: Gift, card: CreditCard, repeat: Repeat, leaf: Leaf, sparkles: Sparkles, sprout: Sprout, moon: Moon, paw: PawPrint, pot: Flower2, book: BookOpen, drop: Droplets, sun: Sun, alert: TriangleAlert };
+const MENU_ICONS = { building: Building2, users: Users, camera: Camera, mail: Mail, compass: Compass, scale: Scale, stethoscope: Stethoscope, sofa: Sofa, graduation: GraduationCap, gift: Gift, card: CreditCard, repeat: Repeat, leaf: Leaf, sparkles: Sparkles, sprout: Sprout, moon: Moon, paw: PawPrint, pot: Flower2, book: BookOpen, drop: Droplets, sun: Sun, alert: TriangleAlert };
 
 function Dropdown({ item, open, setOpen }) {
   const ref = useRef(null);

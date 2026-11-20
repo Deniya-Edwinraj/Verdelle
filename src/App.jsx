@@ -36,6 +36,9 @@ const Gifts = lazy(() => import('./pages/Gifts'));
 const PlantStyling = lazy(() => import('./pages/PlantStyling'));
 const CareCourse = lazy(() => import('./pages/CareCourse'));
 const Rewards = lazy(() => import('./pages/Rewards'));
+const OfficePlants = lazy(() => import('./pages/OfficePlants'));
+const Refer = lazy(() => import('./pages/Refer'));
+const Community = lazy(() => import('./pages/Community'));
 
 export default function App() {
   return (
@@ -78,6 +81,10 @@ export default function App() {
         <Route path="plant-styling" element={<PlantStyling />} />
         <Route path="care-course" element={<CareCourse />} />
         <Route path="rewards" element={<Rewards />} />
+        <Route path="office-plants" element={<OfficePlants />} />
+        <Route path="refer" element={<Refer />} />
+        <Route path="community" element={<Community />} />
+        <Route path="account/occasions" element={<Account tab="occasions" />} />
         <Route path="account/rewards" element={<Account tab="rewards" />} />
         <Route path="account/subscriptions" element={<Account tab="subscriptions" />} />
         <Route path="*" element={<NotFound />} />

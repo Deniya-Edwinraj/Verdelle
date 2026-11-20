@@ -414,7 +414,7 @@ export function ReviewsPanel({ product, seeded }) {
       {/* Summary */}
       <div className="grid gap-6 rounded-2xl bg-card/60 p-5 sm:grid-cols-[auto_1fr_auto] sm:items-center">
         <div>
-          <span className="font-serif text-5xl font-semibold leading-none text-forest">{avg.toFixed(1)}</span>
+          <span className="font-serif text-5xl font-semibold leading-none text-forest">{count ? avg.toFixed(1) : '—'}</span>
           <RatingStars rating={avg} size={15} className="mt-2" />
           <p className="mt-1 text-xs text-muted">{count} reviews</p>
         </div>

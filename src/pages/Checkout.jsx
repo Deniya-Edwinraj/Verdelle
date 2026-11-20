@@ -3,8 +3,8 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { CreditCard, Gift, Lock, Wallet, Truck } from 'lucide-react';
-import { deliveryWindow, fmtDay } from '../utils/delivery';
+import { CalendarClock, CreditCard, Gift, Lock, Wallet, Truck } from 'lucide-react';
+import { addBusinessDays, deliveryWindow, fmtDay } from '../utils/delivery';
 import { markRewardUsed } from '../hooks/useRewards';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -32,7 +32,8 @@ const schema = addressSchema.extend({
     .optional()
     .refine((v) => !v || /^[+\d][\d\s()-]{6,}$/.test(v), 'Enter a valid phone number'),
   delivery: z.enum(['standard', 'express']),
-  payment: z.enum(['card', 'paypal', 'cod']),
+  payment: z.enum(['card', 'payin4', 'paypal', 'cod']),
+  deliveryDate: z.string().optional(),
   saveAddress: z.boolean().optional(),
   isGift: z.boolean().optional(),
   giftWrap: z.boolean().optional(),
@@ -80,6 +81,7 @@ export default function Checkout() {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(schema),
@@ -96,6 +98,7 @@ export default function Checkout() {
       phone: '',
       delivery: 'standard',
       payment: 'card',
+      deliveryDate: '',
       saveAddress: !!user && !addresses.length,
       isGift: false,
       giftWrap: true,
@@ -105,6 +108,14 @@ export default function Checkout() {
   });
   const delivery = watch('delivery');
   const payment = watch('payment');
+  const deliveryDate = watch('deliveryDate');
+  // Selectable delivery dates: from the earliest date for the chosen method, then the next 10 business days.
+  const dateOptions = (() => {
+    const first = deliveryWindow(delivery).from;
+    const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    return Array.from({ length: 10 }, (_, i) => iso(addBusinessDays(first, i)));
+  })();
+  const chosenDate = dateOptions.includes(deliveryDate) ? deliveryDate : dateOptions[0];
   const isGift = watch('isGift');
   const giftWrap = !!isGift && !!watch('giftWrap');
   const giftMessage = watch('giftMessage') || '';
@@ -133,7 +144,8 @@ export default function Checkout() {
       gift: d.isGift ? { to: d.giftTo || '', message: d.giftMessage || '', wrap, wrapPrice: t.gift } : null,
       total: t.total,
       delivery: SITE.shipping[d.delivery].label,
-      payment: { card: 'Credit / debit card', paypal: 'PayPal', cod: 'Pay on delivery' }[d.payment],
+      payment: { card: 'Credit / debit card', payin4: `Pay in ${SITE.payIn4.installments} instalments`, paypal: 'PayPal', cod: 'Pay on delivery' }[d.payment],
+      deliveryDate: dateOptions.includes(d.deliveryDate) ? d.deliveryDate : dateOptions[0],
       address: { firstName: d.firstName, lastName: d.lastName, address1: d.address1, address2: d.address2, city: d.city, state: d.state, postcode: d.postcode, country: d.country },
     };
     if (user && d.saveAddress) saveAddress({ ...order.address, isDefault: !addresses.length });
@@ -208,6 +220,26 @@ export default function Checkout() {
                 <RadioCard name="delivery" value="express" register={register} checked={delivery === 'express'} icon={Truck} title={SITE.shipping.express.label} sub={win('express')} right={money(SITE.shipping.express.price)} />
               </div>
 
+              {/* Delivery date */}
+              <div className="mt-5 rounded-2xl border border-line p-4">
+                <p className="text-sm font-medium">Choose your delivery date</p>
+                <p className="text-xs text-muted">Perfect for birthdays and special occasions — we’ll aim to arrive on the day you pick.</p>
+                <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1" role="radiogroup" aria-label="Delivery date">
+                  {dateOptions.map((iso, i) => {
+                    const d = new Date(iso + 'T12:00:00');
+                    const on = chosenDate === iso;
+                    return (
+                      <label key={iso} className={`flex w-[68px] shrink-0 cursor-pointer flex-col items-center rounded-2xl py-2.5 ring-1 transition focus-within:ring-2 focus-within:ring-botanical/50 ${on ? 'bg-forest text-white ring-forest' : 'bg-white ring-line hover:ring-sage'}`}>
+                        <input type="radio" value={iso} checked={on} onChange={() => setValue('deliveryDate', iso)} className="sr-only" />
+                        <span className={`text-[10px] font-semibold uppercase tracking-wider ${on ? 'text-white/70' : 'text-muted'}`}>{d.toLocaleDateString('en-US', { weekday: 'short' })}</span>
+                        <span className="font-serif text-xl font-semibold leading-tight">{d.getDate()}</span>
+                        <span className={`text-[10px] ${on ? 'text-white/70' : 'text-muted'}`}>{i === 0 ? 'Earliest' : d.toLocaleDateString('en-US', { month: 'short' })}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
               {/* Gift options */}
               <div className={`mt-5 rounded-2xl border p-4 transition ${isGift ? 'border-forest bg-mist/30' : 'border-line'}`}>
                 <label className="flex cursor-pointer items-center gap-3">
@@ -245,6 +277,17 @@ export default function Checkout() {
             <Section n={4} title="Payment">
               <div className="space-y-3">
                 <RadioCard name="payment" value="card" register={register} checked={payment === 'card'} icon={CreditCard} title="Credit / debit card" sub="Processed securely by your payment provider" />
+                {totals(cart, delivery, { giftWrap }).total >= SITE.payIn4.min && (
+                  <RadioCard
+                    name="payment"
+                    value="payin4"
+                    register={register}
+                    checked={payment === 'payin4'}
+                    icon={CalendarClock}
+                    title={`Pay in ${SITE.payIn4.installments} interest-free instalments`}
+                    sub={`${SITE.payIn4.installments} payments of ${money(totals(cart, delivery, { giftWrap }).total / SITE.payIn4.installments)}, every 2 weeks`}
+                  />
+                )}
                 <RadioCard name="payment" value="paypal" register={register} checked={payment === 'paypal'} icon={Wallet} title="PayPal" />
                 <RadioCard name="payment" value="cod" register={register} checked={payment === 'cod'} icon={Truck} title="Pay on delivery" />
               </div>

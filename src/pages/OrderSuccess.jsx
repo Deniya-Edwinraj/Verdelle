@@ -7,6 +7,7 @@ import { getProduct, getProductById } from '../data/products';
 import { ProductImage } from '../components/art/scenes';
 import { addBusinessDays, dispatchDate, fmtDay } from '../utils/delivery';
 import { usePageMeta } from '../hooks/usePageMeta';
+import OrderCareCards from '../components/care/CareCardQR';
 
 function readLast() {
   try {
@@ -55,8 +56,9 @@ export default function OrderSuccess() {
   const a = order.address;
   const express = /express/i.test(order.delivery || '');
   const dispatch = dispatchDate(new Date(order.date));
-  const from = addBusinessDays(dispatch, express ? 1 : 3);
-  const to = addBusinessDays(dispatch, express ? 2 : 5);
+  const chosen = order.deliveryDate ? new Date(order.deliveryDate + 'T12:00:00') : null;
+  const from = chosen || addBusinessDays(dispatch, express ? 1 : 3);
+  const to = chosen || addBusinessDays(dispatch, express ? 2 : 5);
   const count = order.items.reduce((n, i) => n + i.qty, 0);
 
   const copy = async () => {
@@ -126,9 +128,15 @@ export default function OrderSuccess() {
         <div className="rounded-[32px] bg-white p-6 shadow-lift ring-1 ring-line/70 md:p-8">
           <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-muted">Estimated delivery</p>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-muted">{chosen ? 'Your delivery date' : 'Estimated delivery'}</p>
               <p className="mt-1 font-serif text-[28px] font-semibold leading-tight text-forest md:text-[34px]">
-                {fmtDay(from)} <span className="text-muted">–</span> {fmtDay(to)}
+                {fmtDay(from)}
+                {!chosen && (
+                  <>
+                    {' '}
+                    <span className="text-muted">–</span> {fmtDay(to)}
+                  </>
+                )}
               </p>
               <p className="mt-1 text-xs text-muted">{order.delivery}</p>
             </div>
@@ -289,6 +297,10 @@ export default function OrderSuccess() {
               </div>
             ))}
           </div>
+        </div>
+
+        <div className="mt-6">
+          <OrderCareCards items={order.items} />
         </div>
 
         {/* While you wait */}

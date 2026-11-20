@@ -7,6 +7,7 @@ export const testimonials = [
 ];
 
 export const reviewsFor = (product) => {
+  if (!product.reviewCount) return [];
   const n = product.id.charCodeAt(product.id.length - 1);
   return [0, 1, 2].map((i) => {
     const t = testimonials[(n + i) % testimonials.length];

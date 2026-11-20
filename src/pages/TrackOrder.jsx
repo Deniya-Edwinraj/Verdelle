@@ -43,8 +43,9 @@ function progress(order) {
   const dispatch = dispatchDate(placed);
   const shipped = new Date(dispatch);
   shipped.setHours(17, 0, 0, 0);
-  const deliverFrom = addBusinessDays(dispatch, express ? 1 : 3);
-  const deliverTo = addBusinessDays(dispatch, express ? 2 : 5);
+  const chosen = order.deliveryDate ? new Date(order.deliveryDate + 'T09:00:00') : null;
+  const deliverFrom = chosen || addBusinessDays(dispatch, express ? 1 : 3);
+  const deliverTo = chosen || addBusinessDays(dispatch, express ? 2 : 5);
   const now = new Date();
   const times = [placed, new Date(Math.max(placed.getTime() + 2 * 3600000, dispatch.getTime())), shipped, deliverFrom];
   let current = 0;

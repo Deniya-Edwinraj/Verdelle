@@ -66,6 +66,32 @@ export const SUBSCRIPTION_PLANS = [
     includes: ['One large statement plant (24 cm pot)', 'Premium planter', 'Printed care card + styling tips'],
     sample: ['monstera-deliciosa', 'bird-of-paradise', 'ficus-lyrata'],
   },
+  {
+    key: 'kids',
+    name: 'My First Plant',
+    blurb: 'A 3-month journey for young growers (6+), with fun activity cards and kid-safe plants.',
+    price: 29,
+    includes: ['One pet- and kid-friendly plant', 'Activity & sticker card', 'Grow-along journal page'],
+    sample: ['spider-plant', 'peperomia', 'calathea'],
+    term: '3-month journey',
+  },
+];
+
+/** A short lesson included in every subscription box, so subscribers learn as they grow. */
+export const BOX_LESSONS = [
+  ['Month 1', 'Settling in', 'Unboxing, finding the right spot and your first watering.'],
+  ['Month 2', 'Repotting 101', 'When to size up, choosing soil and repotting without stress.'],
+  ['Month 3', 'Propagation', 'Turn one plant into many with cuttings in water or soil.'],
+  ['Month 4', 'Grooming', 'Pruning, cleaning leaves and shaping for fuller growth.'],
+];
+
+/* ------------------------------------------------------------------ */
+/* Office plant rental                                                  */
+/* ------------------------------------------------------------------ */
+export const RENTAL_PLANS = [
+  { key: 'studio', name: 'Studio', plants: 'Up to 8 plants', price: 79, ideal: 'Small offices & studios', perks: ['Plants, planters & installation', 'Monthly care visit', 'Free plant replacements'] },
+  { key: 'workplace', name: 'Workplace', plants: '9–25 plants', price: 199, ideal: 'Growing teams', perks: ['Everything in Studio', 'Fortnightly care visits', 'Seasonal plant refresh'], popular: true },
+  { key: 'enterprise', name: 'Enterprise', plants: '25+ plants & green walls', price: null, ideal: 'Large & multi-site', perks: ['Bespoke biophilic design', 'Weekly care visits', 'Dedicated account manager'] },
 ];
 export const SUBSCRIPTION_FREQUENCIES = [
   { key: 'monthly', label: 'Every month', discount: 0 },
@@ -170,6 +196,7 @@ export const REWARDS = {
   name: 'Verdelle Leaves',
   perDollar: 1, // leaves earned per $1 spent
   welcome: 50, // leaves for joining
+  occasionBonus: 50, // leaves for saving 3 occasions
   redeem: [
     { leaves: 100, value: 5 },
     { leaves: 200, value: 12 },

@@ -1,5 +1,5 @@
 import { useSearchParams, Link } from 'react-router-dom';
-import { ArrowRight, Briefcase, Cake, CreditCard, Flower2, Gift, Heart, Home, PawPrint, PenLine, Truck, Zap } from 'lucide-react';
+import { ArrowRight, Bell, Briefcase, Cake, CreditCard, Flower2, Gift, Heart, Home, PawPrint, PenLine, Truck, Zap } from 'lucide-react';
 import { OCCASIONS } from '../data/services';
 import { SITE } from '../data/site';
 import ProductGrid from '../components/products/ProductGrid';
@@ -98,6 +98,26 @@ export default function Gifts() {
           )}
         </div>
         <ProductGrid key={active.key} products={active.picks} />
+      </section>
+
+      {/* Occasion reminders */}
+      <section className="container pb-6">
+        <div className="flex flex-col items-start justify-between gap-5 rounded-[28px] bg-white p-6 shadow-soft ring-1 ring-line/70 md:flex-row md:items-center md:p-8">
+          <div className="flex items-center gap-4">
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-mist text-forest">
+              <Bell size={20} />
+            </span>
+            <div>
+              <p className="font-serif text-2xl text-ink">
+                Never miss a <em className="italic text-botanical">special day</em>
+              </p>
+              <p className="mt-0.5 text-sm text-muted">Save birthdays and anniversaries — we’ll remind you a week before. Save 3 and earn 50 bonus leaves.</p>
+            </div>
+          </div>
+          <Link to="/account/occasions" className="group inline-flex shrink-0 items-center gap-2 rounded-full bg-forest px-6 py-3 text-sm font-semibold text-white transition hover:bg-botanical">
+            Save your dates <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
+          </Link>
+        </div>
       </section>
 
       {/* Gift card + subscription */}

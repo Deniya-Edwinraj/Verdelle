@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, CalendarCheck, Check, Gift, Mail, PackageOpen, PauseCircle, Repeat, Sparkles, Sprout, Truck, User } from 'lucide-react';
-import { SUBSCRIPTION_FREQUENCIES, SUBSCRIPTION_PLANS, planPrice } from '../data/services';
+import { BOX_LESSONS, SUBSCRIPTION_FREQUENCIES, SUBSCRIPTION_PLANS, planPrice } from '../data/services';
 import { getProduct } from '../data/products';
 import { ProductImage } from '../components/art/scenes';
 import { Accordion, PageHero, money } from '../components/ui';
@@ -122,7 +122,7 @@ export default function Subscription() {
           </div>
         </div>
 
-        <ul className="grid gap-5 lg:grid-cols-3">
+        <ul className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
           {SUBSCRIPTION_PLANS.map((p) => {
             const on = p.key === plan;
             const samples = p.sample.map(getProduct).filter(Boolean);
@@ -138,7 +138,7 @@ export default function Subscription() {
                   {on && <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-botanical/50 blur-3xl" />}
                   <div className="relative flex items-start justify-between gap-3">
                     <p className={`font-serif text-2xl font-semibold ${on ? 'text-white' : 'text-ink'}`}>{p.name}</p>
-                    {p.popular && <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider ${on ? 'bg-white/15 text-sage-soft' : 'bg-mist text-forest'}`}>Most popular</span>}
+                    {(p.popular || p.term) && <span className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider ${on ? 'bg-white/15 text-sage-soft' : p.term ? 'bg-[#F3EBDD] text-[#7A5B2E]' : 'bg-mist text-forest'}`}>{p.term ? 'For kids' : 'Most popular'}</span>}
                   </div>
                   <p className={`relative mt-2 text-sm leading-relaxed ${on ? 'text-white/70' : 'text-muted'}`}>{p.blurb}</p>
                   <p className="relative mt-5">
@@ -170,6 +170,30 @@ export default function Subscription() {
             );
           })}
         </ul>
+      </section>
+
+      {/* Learn as you grow */}
+      <section className="container pb-14 md:pb-20">
+        <div className="rounded-[32px] bg-mist/50 p-6 md:p-10">
+          <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+            <div>
+              <Eyebrow>Learn as you grow</Eyebrow>
+              <h2 className="mt-3 text-[28px] font-medium leading-tight tracking-tight md:text-[36px]">
+                A new skill in <em className="font-normal italic text-botanical">every box</em>
+              </h2>
+            </div>
+            <p className="max-w-sm text-sm text-muted">Each delivery includes a short, illustrated lesson card — so you grow as a plant parent while your collection grows.</p>
+          </div>
+          <ol className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {BOX_LESSONS.map(([month, title, body]) => (
+              <li key={month} className="rounded-[22px] bg-white p-5 shadow-soft ring-1 ring-line/60">
+                <span className="rounded-full bg-mist px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-forest">{month}</span>
+                <p className="mt-4 font-serif text-xl font-semibold text-ink">{title}</p>
+                <p className="mt-1 text-sm leading-relaxed text-muted">{body}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
       </section>
 
       {/* Subscribe */}
