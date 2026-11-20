@@ -16,6 +16,7 @@ const COLS = [
       ['Plant Care', '/plant-care'],
       ['The Journal', '/blog'],
       ['Plant Finder', '/plant-finder'],
+      ['View in your room', '/', { scrollTo: 'view-in-your-room' }, 'AR'],
       ['Track Order', '/track-order'],
       ['Gift Cards', '/gift-cards'],
       ['Plant Subscription', '/subscription'],
@@ -77,10 +78,11 @@ export default function Footer() {
           <nav key={c.title} aria-label={c.title} className={i === 0 ? 'lg:row-span-2' : ''}>
             <h2 className="mb-4 font-sans text-sm font-semibold text-white">{c.title}</h2>
             <ul className={c.links.length > 8 ? "grid grid-cols-2 gap-x-6 gap-y-2.5" : "space-y-2.5"}>
-              {c.links.map(([label, to]) => (
+              {c.links.map(([label, to, state, badge]) => (
                 <li key={label}>
-                  <Link to={to} className="text-sm text-white/75 transition hover:text-white">
+                  <Link to={to} state={state} className="inline-flex items-center gap-1.5 text-sm text-white/75 transition hover:text-white">
                     {label}
+                    {badge && <span className="rounded-full bg-sage-soft/20 px-1.5 py-px text-[9px] font-bold uppercase tracking-wider text-sage-soft">{badge}</span>}
                   </Link>
                 </li>
               ))}
