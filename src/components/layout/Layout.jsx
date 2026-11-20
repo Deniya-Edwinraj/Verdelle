@@ -10,13 +10,22 @@ import CookieConsent from './CookieConsent';
 import ChatWidget from './ChatWidget';
 import { LoadingSkeleton, ScrollToTop } from '../ui';
 
+/** Scrolls to a section from `#id` in the URL, or from `state.scrollTo` (keeps the URL clean). */
 function HashScroll() {
-  const { hash, pathname } = useLocation();
+  const { hash, pathname, state, key } = useLocation();
+  const target = state?.scrollTo || (hash && hash.slice(1));
   useEffect(() => {
-    if (!hash) return;
-    const t = setTimeout(() => document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
+    if (!target) return undefined;
+    let tries = 0;
+    let t;
+    const go = () => {
+      const el = document.getElementById(target);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      else if (tries++ < 20) t = setTimeout(go, 100); // wait for lazy-loaded pages
+    };
+    t = setTimeout(go, 150);
     return () => clearTimeout(t);
-  }, [hash, pathname]);
+  }, [target, pathname, key]);
   return null;
 }
 

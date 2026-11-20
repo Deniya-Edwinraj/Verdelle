@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
+import ARViewer from '../components/products/ARViewer';
 import {
   ArrowRight, BookOpen, Check, Droplets, Gauge, Heart, Lock, Minus, Package, PawPrint, Plus, RotateCcw, Scale, Share2, ShoppingBag, Sparkles, Sun, Thermometer, Truck, Wind, Zap,
 } from 'lucide-react';
@@ -64,6 +65,7 @@ export default function ProductDetails() {
   const { slug } = useParams();
   const product = getProduct(slug);
   const navigate = useNavigate();
+  const { search } = useLocation();
   const { add } = useCart();
   const { trackView, recent } = useWishlist();
   const notify = useToast();
@@ -249,6 +251,7 @@ export default function ProductDetails() {
                 product={product}
                 badge={badge && <span className={`pointer-events-none absolute left-4 top-4 rounded-full px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] shadow-sm ${badge[1]}`}>{badge[0]}</span>}
               />
+              <ARViewer key={`ar-${product.id}`} product={product} size={size} onSizeChange={setSize} autoOpen={new URLSearchParams(search).get('ar') === '1'} />
             </div>
 
             {/* Info */}

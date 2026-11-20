@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import {
-  ArrowRight, BookOpen, Building2, Camera, ChevronDown, Compass, CreditCard, Users, Gift, GraduationCap, Repeat, Sofa, Stethoscope, Droplets, Flower2, Heart, Leaf, Mail, Menu, Moon, PawPrint, Phone, Scale, Search, ShoppingBag, Sparkles, Sprout, Sun, TriangleAlert, User,
+  ArrowRight, BookOpen, Box, Building2, Camera, ChevronDown, Compass, CreditCard, Users, Gift, GraduationCap, Repeat, Sofa, Stethoscope, Droplets, Flower2, Heart, Leaf, Mail, Menu, Moon, PawPrint, Phone, Scale, Search, ShoppingBag, Sparkles, Sprout, Sun, TriangleAlert, User,
 } from 'lucide-react';
 import { Logo, money } from '../ui';
 import { NAV, SITE } from '../../data/site';
@@ -149,6 +149,10 @@ export default function Header() {
             <button onClick={() => setSearchOpen(true)} className="grid h-10 w-10 place-items-center rounded-full hover:bg-mist/60" aria-label="Search plants">
               <Search size={19} />
             </button>
+            <Link to="/" state={{ scrollTo: 'view-in-your-room' }}className="group relative hidden h-10 w-10 place-items-center rounded-full hover:bg-mist/60 md:grid" aria-label="View plants in your room (AR)" title="View in your room (AR)">
+              <Box size={19} />
+              <span className="absolute -right-0.5 top-0.5 rounded-full bg-botanical px-1 text-[8px] font-bold leading-[13px] text-white" aria-hidden="true">AR</span>
+            </Link>
             <Link to={user ? '/account' : '/login'} className="hidden h-10 w-10 place-items-center rounded-full hover:bg-mist/60 sm:grid" aria-label={user ? 'My account' : 'Sign in'}>
               <User size={19} />
             </Link>

@@ -1,6 +1,7 @@
 import { Camera, ExternalLink, Images, Scale } from 'lucide-react';
 import { PageHero } from '../components/ui';
 import { PHOTO_CREDITS } from '../data/assets';
+import { AR_MODELS } from '../data/ar';
 import { usePageMeta } from '../hooks/usePageMeta';
 
 function SectionHead({ eyebrow, lead, accent, body, count }) {
@@ -145,6 +146,24 @@ export default function PhotoCredits() {
           </div>
         </section>
       )}
+
+      {/* 3D models */}
+      <section className="container pb-4 pt-14 md:pt-20">
+        <SectionHead eyebrow="3D models" lead="Augmented reality" accent="models" body="Used for the “View in your room” feature." count={Object.keys(AR_MODELS).length} />
+        <ul className="grid gap-4 md:grid-cols-2">
+          {Object.values(AR_MODELS).map((m) => (
+            <li key={m.src}>
+              <a href={m.sourceUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-4 rounded-[22px] bg-white p-5 shadow-soft ring-1 ring-line/70 transition hover:shadow-lift">
+                <span>
+                  <span className="block text-sm font-semibold text-ink">{m.name}</span>
+                  <span className="block text-xs text-muted">By {m.author} · {m.source}</span>
+                </span>
+                <span className="rounded-full bg-mist/70 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-forest">{m.license}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       {/* Closing note */}
       <section className="container py-14 md:py-20">
