@@ -149,7 +149,7 @@ export default function Header() {
             <button onClick={() => setSearchOpen(true)} className="grid h-10 w-10 place-items-center rounded-full hover:bg-mist/60" aria-label="Search plants">
               <Search size={19} />
             </button>
-            <Link to="/" state={{ scrollTo: 'view-in-your-room' }}className="group relative hidden h-10 w-10 place-items-center rounded-full hover:bg-mist/60 md:grid" aria-label="View plants in your room (AR)" title="View in your room (AR)">
+            <Link to="/" state={{ scrollTo: 'view-in-your-room' }} className="group relative grid h-10 w-10 place-items-center rounded-full hover:bg-mist/60" aria-label="View plants in your room (AR)" title="View in your room (AR)">
               <Box size={19} />
               <span className="absolute -right-0.5 top-0.5 rounded-full bg-botanical px-1 text-[8px] font-bold leading-[13px] text-white" aria-hidden="true">AR</span>
             </Link>
